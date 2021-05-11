@@ -1,8 +1,12 @@
 package jogo;
 
-public class Main {
+import jogo.ui.texto.QuatroUI;
+import jogo.logica.MaquinaEstados;
 
+public class Main {
     public static void main(String[] args) {
-	    System.out.println("Yeet");
+        MaquinaEstados maquinaEstados= new MaquinaEstados();
+        QuatroUI intFace = new QuatroUI(maquinaEstados);
+	    intFace.start();
     }
 }
