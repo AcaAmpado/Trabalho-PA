@@ -3,18 +3,20 @@ package jogo.logica.dados;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jogo.logica.dados.Jogador;
+
 public class Peca {
     private Jogador jogador;
     private int [] coordenadas;
-    private char symbol;
+    private int symbol;
 
-    public Peca(jogo.logica.dados.Jogador jogador, int [] coordenadas){
+    public Peca(Jogador jogador, int numJog, int [] coordenadas){
         this.jogador=jogador;
         this.coordenadas=coordenadas;
-        this.symbol=jogador.getNome().charAt(0);//TODO o simbolo pode ser igual atm!!!
+        this.symbol=numJog;
     }
 
-    public char getSymbol(){
+    public int getSymbol(){
         return symbol;
     }
 

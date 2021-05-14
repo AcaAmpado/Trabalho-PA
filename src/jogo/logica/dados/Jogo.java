@@ -47,13 +47,13 @@ public class Jogo {
             }
         }
         vezJogador= (int) (Math.random()%2);
-
-        tabuleiro.get(1).add(new Peca(players.get(1), new int[]{1, 0} ));
-        tabuleiro.get(1).add(new Peca(players.get(0), new int[]{1, 1} ));
-        tabuleiro.get(1).add(new Peca(players.get(1), new int[]{1, 2} ));
-        tabuleiro.get(5).add(new Peca(players.get(0), new int[]{5, 0} ));
-        tabuleiro.get(5).add(new Peca(players.get(1), new int[]{5, 1} ));
-
+/*
+        tabuleiro.get(1).add(new Peca(players.get(1), 1, new int[]{1, 0} ));
+        tabuleiro.get(1).add(new Peca(players.get(0), 0, new int[]{1, 1} ));
+        tabuleiro.get(1).add(new Peca(players.get(1), 1, new int[]{1, 2} ));
+        tabuleiro.get(5).add(new Peca(players.get(0), 0, new int[]{5, 0} ));
+        tabuleiro.get(5).add(new Peca(players.get(1), 1, new int[]{5, 1} ));
+*/
         return true;
     }
 
@@ -74,11 +74,12 @@ public class Jogo {
         return true;
     }
 
+
     public StringBuilder getBoard() {
         StringBuilder board= new StringBuilder();
         board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
         board.append("-----------------------------\n");
-        for(int i = ALTURA;i >= 0;i--){
+        for(int i = ALTURA-1;i >= 0;i--){
             board.append("| ");
             for(int j = 0; j < LARGURA; j++){
                 if(i >= tabuleiro.get(j).size())
@@ -93,8 +94,77 @@ public class Jogo {
         return board;
     }
 
-    public boolean fazJogada(int coluna) {
-        //TODO verifica se tem espaco na coluna(-1), joga, muda de vez e verifica se ganhou
+    public void setVezJogador(){
+        vezJogador=(vezJogador+1)%2;
+    }
+
+    public boolean isWinner(){
+
+        for(int linha = 0; linha<ALTURA;linha++){ // verifica se tem na horizontal
+            for(int col = 0; col<LARGURA-3;col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
+                    && tabuleiro.get(col+1).get(linha).getSymbol()==vezJogador
+                    && tabuleiro.get(col+2).get(linha).getSymbol()==vezJogador
+                    && tabuleiro.get(col+3).get(linha).getSymbol()==vezJogador){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+
+        for(int col = 0; col<LARGURA;col++){ // verifica se tem na vertical
+            for(int linha = 0; linha<ALTURA-3;linha++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
+                            && tabuleiro.get(col).get(linha+1).getSymbol()==vezJogador
+                            && tabuleiro.get(col).get(linha+2).getSymbol()==vezJogador
+                            && tabuleiro.get(col).get(linha+3).getSymbol()==vezJogador){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+
+        for(int linha = 3; linha<ALTURA;linha++){ // verifica se tem na diagonal asc
+            for(int col = 0; col < LARGURA-3;col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
+                            && tabuleiro.get(col-1).get(linha-1).getSymbol()==vezJogador
+                            && tabuleiro.get(col-2).get(linha-2).getSymbol()==vezJogador
+                            && tabuleiro.get(col-3).get(linha-3).getSymbol()==vezJogador){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+
+        for(int linha = 3; linha < ALTURA ;linha++){ // verifica se tem na diagonal desc
+            for(int col = 0; col < LARGURA - 3 ;col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
+                            && tabuleiro.get(col+1).get(linha-1).getSymbol()==vezJogador
+                            && tabuleiro.get(col+2).get(linha-2).getSymbol()==vezJogador
+                            && tabuleiro.get(col+3).get(linha-3).getSymbol()==vezJogador){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
         return false;
+    }
+
+    public Erro fazJogada(int coluna) {
+        if(tabuleiro.get(coluna).size()>=ALTURA){
+            return Erro.ColunaCheia;
+        }
+        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador), vezJogador ,new int []{coluna,tabuleiro.get(coluna).size()}));
+        if(isWinner()) {
+            return Erro.Ganhou;
+        }
+        setVezJogador();
+        return Erro.JogadaValida;
+        //TODO verifica se tem espaco na coluna(-1), joga, muda de vez e verifica se ganhou
+
     }
 }

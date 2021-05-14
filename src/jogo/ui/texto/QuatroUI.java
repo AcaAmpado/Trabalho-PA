@@ -98,6 +98,7 @@ public class QuatroUI {
     private void uiJogada(){
 
         System.out.println(maquinaEstados.getBoard());
+        System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Sair")) {
                 case 1:
@@ -120,14 +121,23 @@ public class QuatroUI {
         else{
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Sair")) {
                 case 1:
-                    if(!maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar",1,7)))
-                        System.out.println("Jogada Invalida");
+                    switch(maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1)){
+                        case Ganhou -> System.out.println("Ganhou Poggies");
+                        case ColunaCheia -> System.out.println("Jogada inválida! A coluna já está cheia");
+                        case JogadaValida -> {}
+                        default -> {
+                            System.out.println("Erro critico!");
+                            sair=true;
+                        }
+                    }
                     break;
                 case 2:
                     guardaJogo();
                     break;
                 case 3:
                     utilizaCreditos();
+                case 4:
+                    jogaPecaEspecial();
                 case 0:
                     if(sairGuarda())
                         sair=true; //TODO talvez meter isto a mandar para o estado de gameOver
@@ -138,6 +148,9 @@ public class QuatroUI {
                     break;
             }
         }
+    }
+
+    private void jogaPecaEspecial() {
     }
 
     private void utilizaCreditos() {
@@ -181,7 +194,8 @@ public class QuatroUI {
 
     }
     private void uiGameOver(){
-
+        System.out.println("Win condition Poggies");
+        sair=true;//TEMP
     }
 
 

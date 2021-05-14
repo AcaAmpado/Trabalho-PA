@@ -1,5 +1,6 @@
 package jogo.logica;
 
+import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
 import jogo.logica.estados.IEstado;
 import jogo.logica.dados.Jogo;
@@ -57,7 +58,19 @@ public class MaquinaEstados {
         return jogo.getBoard();
     }
 
-    public boolean fazJogada(int coluna) {
-        return jogo.fazJogada(coluna);
+    public Erro fazJogada(int coluna) {
+        switch(jogo.fazJogada(coluna)){
+            case Ganhou -> {
+                atual = atual.acabaJogo();
+                return Erro.Ganhou;
+            }
+            case ColunaCheia -> {
+                return Erro.ColunaCheia;
+            }
+            case JogadaValida -> {
+                return Erro.JogadaValida;
+            }
+        }
+        return Erro.Critico;
     }
 }

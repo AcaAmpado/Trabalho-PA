@@ -19,4 +19,5 @@ public interface IEstado {
 
     void jogaAI();
 
+    IEstado acabaJogo();
 }
