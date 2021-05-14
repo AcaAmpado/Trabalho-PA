@@ -29,10 +29,15 @@ public abstract class EstadoAdapter implements IEstado {
     }
 
     @Override
-    public IEstado Jogada() {
-        return null;
+    public void jogaAI() {
+        //return;
     }
 
+
+    @Override
+    public IEstado comecaJogo() {
+        return null;
+    }
     @Override
     public IEstado selGameMode() {
         return null;

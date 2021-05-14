@@ -9,11 +9,14 @@ public interface IEstado {
 
     IEstado start();
 
+    IEstado comecaJogo();
+
     IEstado selGameMode();
 
     IEstado carregaJogo();
 
     IEstado historicoJogos();
 
-    IEstado Jogada();
+    void jogaAI();
+
 }

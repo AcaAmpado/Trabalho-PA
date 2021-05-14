@@ -1,6 +1,6 @@
 package jogo.logica;
 
-import jogo.logica.estados.GameMode;
+import jogo.logica.dados.TipoJogador;
 import jogo.logica.estados.IEstado;
 import jogo.logica.dados.Jogo;
 import jogo.logica.estados.Inicio;
@@ -32,17 +32,32 @@ public class MaquinaEstados {
         atual = atual.historicoJogos();
     }
 
-    public void comecaJogo(String player1, String player2) {
-        jogo.setPlayer1(player1);
-        jogo.setPlayer2(player2);
-        jogo.comecaJogo();
-        atual = atual.Jogada();
+    public boolean comecaJogo(String player1, String player2) {
+        jogo.setPlayer(player1);
+        jogo.setPlayer(player2);
+        if(jogo.comecaJogo()) {
+            atual = atual.comecaJogo();
+            return true;
+        }
+        return false;
     }
 
-    public Situacao getStatus(){
-        return atual.getStatus();
+    public String getNomeJogadorVez(){return jogo.getNomeJogadorVez();}
+    public TipoJogador getTipoJogador(){return jogo.getTipoJogador();}
+    public Situacao getStatus(){return atual.getStatus();}
+
+
+    public void jogaAI() { atual.jogaAI();}
+
+    public boolean guardaJogo(String nomeSave) {
+        return jogo.guardaJogo(nomeSave);
     }
 
+    public StringBuilder getBoard() {
+        return jogo.getBoard();
+    }
 
-
+    public boolean fazJogada(int coluna) {
+        return jogo.fazJogada(coluna);
+    }
 }

@@ -11,7 +11,10 @@ public class NamePlayers extends EstadoAdapter{
         super(jogo);
     }
 
-
+    @Override
+    public IEstado comecaJogo() {
+        return new Jogada(jogo);
+    }
 
     @Override
     public Situacao getStatus() {

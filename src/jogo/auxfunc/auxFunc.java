@@ -11,6 +11,15 @@ public class auxFunc {
         return lerInteiro();
     }
 
+    public static int lerInteiro(String pergunta, int min, int max) {
+        System.out.print(pergunta);
+        int num;
+        do{
+            num = lerInteiro();
+        }while(num < min || num > max);
+        return num;
+    }
+
     public static int lerInteiro(){
         while(!sc.hasNextInt())
             sc.next();
