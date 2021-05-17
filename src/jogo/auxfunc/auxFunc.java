@@ -47,4 +47,13 @@ public class auxFunc {
         }while(resposta.isEmpty());
         return resposta;
     }
+
+    public static double lerNumero(String s) {
+        System.out.print(s);
+        while(!sc.hasNextDouble())
+            sc.next();
+        double valor = sc.nextDouble();
+        sc.nextLine();
+        return valor;
+    }
 }
