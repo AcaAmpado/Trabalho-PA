@@ -17,7 +17,15 @@ public interface IEstado {
 
     IEstado historicoJogos();
 
-    void jogaAI();
-
     IEstado acabaJogo();
+
+    IEstado aguardaPassarTurno();
+
+    IEstado passaTurno();
+
+    IEstado terminaJogo();
+
+    IEstado decideMiniGame();
+
+    IEstado startMiniGame();
 }

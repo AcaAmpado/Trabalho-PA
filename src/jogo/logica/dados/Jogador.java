@@ -6,13 +6,16 @@ public class Jogador {
     private TipoJogador tipo;
     private int creditos;
     private int rondasBonus;
-    //TODO peças especiais
+    private int pecaEspecial;
+    private char symbol;
 
-    public Jogador(String nome, TipoJogador tipo){
+    public Jogador(String nome, TipoJogador tipo,char symbol){
         this.nome=nome;
         this.tipo=tipo;
         this.creditos=0;
         this.rondasBonus=-1;
+        this.pecaEspecial=0;
+        this.symbol = symbol;
     }
 
     public TipoJogador GetTipo(){
@@ -28,7 +31,7 @@ public class Jogador {
     }
 
     public void AdicionaPecaEspecial(){
-        //TODO
+        this.pecaEspecial++;
     }
     @Override
     public String toString() {
@@ -41,5 +44,25 @@ public class Jogador {
 
     public TipoJogador getTipo() {
         return tipo;
+    }
+
+    public void removePecaEspecial() {
+        this.pecaEspecial--;
+    }
+
+    public int getPecaEspecial() {
+        return this.pecaEspecial;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public int getBonus() {
+        return this.rondasBonus;
+    }
+
+    public void decrementaBonus() {
+        this.rondasBonus--;
     }
 }

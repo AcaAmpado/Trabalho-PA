@@ -5,8 +5,6 @@ import jogo.logica.dados.Jogo;
 
 public class NamePlayers extends EstadoAdapter{
 
-    int tipo;
-
     public NamePlayers(Jogo jogo) {
         super(jogo);
     }

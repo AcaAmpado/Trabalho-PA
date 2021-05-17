@@ -6,7 +6,6 @@ import jogo.logica.dados.Jogo;
 public class Jogada extends EstadoAdapter{
     public Jogada(Jogo jogo) {
         super(jogo);
-
     }
 
 
@@ -15,9 +14,10 @@ public class Jogada extends EstadoAdapter{
         return new GameOver(jogo);
     }
 
+
     @Override
-    public void jogaAI() {
-        //TODO meter o AI a jogar
+    public IEstado aguardaPassarTurno() {
+        return new PassarTurno(jogo);
     }
 
     @Override

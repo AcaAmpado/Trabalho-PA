@@ -29,15 +29,34 @@ public abstract class EstadoAdapter implements IEstado {
     }
 
     @Override
+    public IEstado passaTurno() {
+        return null;
+    }
+
+    @Override
     public IEstado acabaJogo() {
         return null;
     }
 
     @Override
-    public void jogaAI() {
-        //return;
+    public IEstado aguardaPassarTurno() {
+        return null;
     }
 
+    @Override
+    public IEstado startMiniGame() {
+        return null;
+    }
+
+    @Override
+    public IEstado decideMiniGame() {
+        return null;
+    }
+
+    @Override
+    public IEstado terminaJogo() {
+        return new GameOver(jogo);
+    }
 
     @Override
     public IEstado comecaJogo() {

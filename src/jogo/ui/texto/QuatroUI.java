@@ -20,9 +20,10 @@ public class QuatroUI {
                 case Carrega -> uiCarrega();
                 case Jogada -> uiJogada();
                 case PassarTurno -> uiPassarTurno();
-                case Decisao -> uiDecisao();
+                case DecisaoMiniGame -> uiDecisao();
                 case MiniGame -> uiMiniGame();
                 case GameOver -> uiGameOver();
+
             }
         }
 
@@ -57,10 +58,10 @@ public class QuatroUI {
                     case 3 -> //AivAi
                             maquinaEstados.selGameMode(3);
                     case 4 -> //Sair
-                            sair = true;
+                            maquinaEstados.terminaJogo();
                     default -> {
                         System.out.println("Erro critico!");
-                        sair = true;
+                        maquinaEstados.terminaJogo();
                     }
                 }
                 break;
@@ -71,11 +72,11 @@ public class QuatroUI {
                 maquinaEstados.historicoJogos();
                 break;
             case 4: //Sair
-                sair=true;
+                maquinaEstados.terminaJogo();
                 break;
             default:
                 System.out.println("Erro critico!");
-                sair=true;
+                maquinaEstados.terminaJogo();
                 break;
         }
     }
@@ -91,7 +92,7 @@ public class QuatroUI {
         }while (player2.compareTo(player1)==0);
         if(!maquinaEstados.comecaJogo(player1,player2)){
             System.out.println("Erro a comecar o jogo!");
-            sair = true;
+            maquinaEstados.terminaJogo();
         }
 
     }
@@ -102,18 +103,26 @@ public class QuatroUI {
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Sair")) {
                 case 1:
-                    maquinaEstados.jogaAI();
+                    switch(maquinaEstados.jogaAI()){
+                        case TabuleiroCheio -> System.out.println("Jogo empatou!");
+                        case JogadaValida -> {}
+                        case Ganhou -> System.out.println("Ganhou Poggies");
+                        default -> {
+                            System.out.println("Erro critico!");
+                            maquinaEstados.terminaJogo();
+                        }
+                    }
                     break;
                 case 2:
                     guardaJogo();
                     break;
                 case 0:
                     if(sairGuarda())
-                        sair=true; //TODO talvez meter isto a mandar para o estado de gameOver
+                        maquinaEstados.terminaJogo();
                     break;
                 default:
                     System.out.println("Erro critico!");
-                    sair=true;
+                    maquinaEstados.terminaJogo();
                     break;
             }
 
@@ -127,7 +136,7 @@ public class QuatroUI {
                         case JogadaValida -> {}
                         default -> {
                             System.out.println("Erro critico!");
-                            sair=true;
+                            maquinaEstados.terminaJogo();
                         }
                     }
                     break;
@@ -136,25 +145,26 @@ public class QuatroUI {
                     break;
                 case 3:
                     utilizaCreditos();
+                    break;
                 case 4:
-                    jogaPecaEspecial();
+                    maquinaEstados.jogaPecaEspecial(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1);
+                    break;
                 case 0:
                     if(sairGuarda())
-                        sair=true; //TODO talvez meter isto a mandar para o estado de gameOver
+                        maquinaEstados.terminaJogo();
                     break;
                 default:
                     System.out.println("Erro critico!");
-                    sair=true;
+                    maquinaEstados.terminaJogo();
                     break;
             }
         }
     }
 
-    private void jogaPecaEspecial() {
-    }
+
 
     private void utilizaCreditos() {
-        //TODO pedir numero de creditos e carregar do historico | dar reset dos contadores e tal
+        //TODO pedir numero de creditos e carregar do historico | dar reset dos contadores e tal | mandar para o aguardaJogada
     }
 
     private boolean sairGuarda(){
@@ -167,35 +177,87 @@ public class QuatroUI {
                 }
                 return true;
             case 0:
-                return true;
+                return false;
             default:
                 System.out.println("Erro critico!");
                 return true;
         }
     }
     private boolean guardaJogo(){
-        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save"));
+        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:"));
     }
 
     private void uiCarrega(){
         //TODO carrega de um ficheiro o jogo
     }
     private void uiHistorico(){
-        //TODO quando tiver o jogo
+        //TODO quando tiver record dos jogos
     }
 
     private void uiPassarTurno(){
+        System.out.println(maquinaEstados.getBoard());
+        if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
+            switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Sair")) {
+                case 1:
+                    maquinaEstados.passaTurno();
+                    break;
+                case 2:
+                    guardaJogo();
+                    break;
+                case 0:
+                    if(sairGuarda())
+                        maquinaEstados.terminaJogo();
+                    break;
+                default:
+                    System.out.println("Erro critico!");
+                    maquinaEstados.terminaJogo();
+                    break;
+            }
 
+        }
+        else{
+            switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Utilizar Créditos", "Sair")) {
+                case 1:
+                    maquinaEstados.passaTurno();
+                    break;
+                case 2:
+                    guardaJogo();
+                    break;
+                case 3:
+                    utilizaCreditos();
+                    break;
+                case 0:
+                    if(sairGuarda())
+                        maquinaEstados.terminaJogo();
+                    break;
+                default:
+                    System.out.println("Erro critico!");
+                    maquinaEstados.terminaJogo();
+                    break;
+            }
+        }
     }
     private void uiDecisao(){
-
+        System.out.println("Pretende jogar um minijogo para ganhar uma peça especial?");
+        switch (auxFunc.escolherOpcao("Jogar minijogo", "Continuar sem minijogo")) {
+            case 1 -> maquinaEstados.startMiniGame();
+            case 0 -> maquinaEstados.semMiniGame();
+        }
     }
+
     private void uiMiniGame(){
-
+        //TODO MINIGAMES
     }
+
     private void uiGameOver(){
-        System.out.println("Win condition Poggies");
-        sair=true;//TEMP
+        System.out.println("Pretende continuar a jogar?");
+        switch (auxFunc.escolherOpcao("Continuar", "Sair")) {
+            case 1 -> maquinaEstados.start();
+            case 0 -> {
+                System.out.println("Obrigado por jogar 4 em linha!");
+                sair=true;
+            }
+        }
     }
 
 

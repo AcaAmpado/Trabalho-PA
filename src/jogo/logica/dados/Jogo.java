@@ -19,21 +19,38 @@ public class Jogo {
             tabuleiro.add(new ArrayList<>());
         }
     }
+    // ------------ Logs ------------
+
+    ArrayList<String> log = new ArrayList<>();
+
+    public void addLog(String str){
+        log.add(str);
+    }
+
+    public ArrayList<String> getLog(){
+        return log;
+    }
+
+    public void clearLog(){
+        log.clear();
+    }
+
+    // ------------------------
 
     public void setTipo(int tipo){
         this.tipo = tipo;
     }
 
-    public void setPlayer(String nome){
+    public void setPlayer(String nome, char symbol){
         if(tipo==1) // PvP
-            this.players.add(new Jogador(nome,TipoJogador.Player));
+            this.players.add(new Jogador(nome,TipoJogador.Player,symbol));
         if(tipo==2) //PvAI
             if(players.size()==0)
-                this.players.add(new Jogador(nome,TipoJogador.Player));
+                this.players.add(new Jogador(nome,TipoJogador.Player,symbol));
             else
-                this.players.add(new Jogador(nome,TipoJogador.AI));
+                this.players.add(new Jogador(nome,TipoJogador.AI,symbol));
         if(tipo==3) //AIvAI
-            this.players.add(new Jogador(nome,TipoJogador.AI));
+            this.players.add(new Jogador(nome,TipoJogador.AI,symbol));
     }
 
     public boolean comecaJogo() {
@@ -46,20 +63,14 @@ public class Jogo {
                 jog.SetCreditos(NUMCREDITOS);
             }
         }
-        vezJogador= (int) (Math.random()%2);
-/*
-        tabuleiro.get(1).add(new Peca(players.get(1), 1, new int[]{1, 0} ));
-        tabuleiro.get(1).add(new Peca(players.get(0), 0, new int[]{1, 1} ));
-        tabuleiro.get(1).add(new Peca(players.get(1), 1, new int[]{1, 2} ));
-        tabuleiro.get(5).add(new Peca(players.get(0), 0, new int[]{5, 0} ));
-        tabuleiro.get(5).add(new Peca(players.get(1), 1, new int[]{5, 1} ));
-*/
+        vezJogador= (int) (Math.random()*2);
+        players.get(vezJogador).decrementaBonus();
         return true;
     }
 
-    public TipoJogador getTipoJogador(int nJogador){
+    /*public TipoJogador getTipoJogador(int nJogador){
         return players.get(nJogador).getTipo();
-    }
+    }*/
 
     public TipoJogador getTipoJogador(){
         return players.get(vezJogador).getTipo();
@@ -85,7 +96,7 @@ public class Jogo {
                 if(i >= tabuleiro.get(j).size())
                     board.append("  | ");
                 else
-                   board.append(tabuleiro.get(j).get(i).getSymbol()).append(" | "); //Tecnicamente imprime as pecas
+                   board.append(tabuleiro.get(j).get(i).getSymbol()).append(" | ");
             }
             board.append("\n");
         }
@@ -103,10 +114,9 @@ public class Jogo {
         for(int linha = 0; linha<ALTURA;linha++){ // verifica se tem na horizontal
             for(int col = 0; col<LARGURA-3;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
-                    && tabuleiro.get(col+1).get(linha).getSymbol()==vezJogador
-                    && tabuleiro.get(col+2).get(linha).getSymbol()==vezJogador
-                    && tabuleiro.get(col+3).get(linha).getSymbol()==vezJogador){
+                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col+1).get(linha).getSymbol()
+                    && tabuleiro.get(col+1).get(linha).getSymbol() == tabuleiro.get(col+2).get(linha).getSymbol()
+                    && tabuleiro.get(col+2).get(linha).getSymbol() == tabuleiro.get(col+3).get(linha).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -116,10 +126,9 @@ public class Jogo {
         for(int col = 0; col<LARGURA;col++){ // verifica se tem na vertical
             for(int linha = 0; linha<ALTURA-3;linha++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
-                            && tabuleiro.get(col).get(linha+1).getSymbol()==vezJogador
-                            && tabuleiro.get(col).get(linha+2).getSymbol()==vezJogador
-                            && tabuleiro.get(col).get(linha+3).getSymbol()==vezJogador){
+                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col).get(linha+1).getSymbol()
+                            && tabuleiro.get(col).get(linha+1).getSymbol() == tabuleiro.get(col).get(linha+2).getSymbol()
+                            && tabuleiro.get(col).get(linha+2).getSymbol() == tabuleiro.get(col).get(linha+3).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -129,10 +138,9 @@ public class Jogo {
         for(int linha = 3; linha<ALTURA;linha++){ // verifica se tem na diagonal asc
             for(int col = 0; col < LARGURA-3;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
-                            && tabuleiro.get(col-1).get(linha-1).getSymbol()==vezJogador
-                            && tabuleiro.get(col-2).get(linha-2).getSymbol()==vezJogador
-                            && tabuleiro.get(col-3).get(linha-3).getSymbol()==vezJogador){
+                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col-1).get(linha-1).getSymbol()
+                            && tabuleiro.get(col-1).get(linha-1).getSymbol() == tabuleiro.get(col-2).get(linha-2).getSymbol()
+                            && tabuleiro.get(col-2).get(linha-2).getSymbol() == tabuleiro.get(col-3).get(linha-3).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -142,10 +150,9 @@ public class Jogo {
         for(int linha = 3; linha < ALTURA ;linha++){ // verifica se tem na diagonal desc
             for(int col = 0; col < LARGURA - 3 ;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol()==vezJogador
-                            && tabuleiro.get(col+1).get(linha-1).getSymbol()==vezJogador
-                            && tabuleiro.get(col+2).get(linha-2).getSymbol()==vezJogador
-                            && tabuleiro.get(col+3).get(linha-3).getSymbol()==vezJogador){
+                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col+1).get(linha-1).getSymbol()
+                            && tabuleiro.get(col+1).get(linha-1).getSymbol() == tabuleiro.get(col+2).get(linha-2).getSymbol()
+                            && tabuleiro.get(col+2).get(linha-2).getSymbol() == tabuleiro.get(col+3).get(linha-3).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -155,16 +162,55 @@ public class Jogo {
     }
 
     public Erro fazJogada(int coluna) {
+        if(!isPlayable())
+            return Erro.TabuleiroCheio;
         if(tabuleiro.get(coluna).size()>=ALTURA){
             return Erro.ColunaCheia;
         }
-        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador), vezJogador ,new int []{coluna,tabuleiro.get(coluna).size()}));
+        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador), new int []{coluna,tabuleiro.get(coluna).size()}));
         if(isWinner()) {
             return Erro.Ganhou;
         }
-        setVezJogador();
         return Erro.JogadaValida;
-        //TODO verifica se tem espaco na coluna(-1), joga, muda de vez e verifica se ganhou
+    }
 
+    public Erro jogaPecaEspecial(int coluna) {
+        if(players.get(vezJogador).getPecaEspecial()==0){
+            return Erro.SemEspecial;
+        }
+        tabuleiro.get(coluna).clear();
+        players.get(vezJogador).removePecaEspecial();
+        return Erro.JogadaValida;
+    }
+
+    public Erro jogaAI() {
+        if(!isPlayable())
+            return Erro.TabuleiroCheio;
+        while(isPlayable()){
+            Erro erro = fazJogada((int)(Math.random()*ALTURA));
+            if(erro != Erro.ColunaCheia)
+                break;
+        }
+        if(isWinner()) {
+            return Erro.Ganhou;
+        }
+        return Erro.JogadaValida;
+    }
+    public Boolean isPlayable(){
+        int contador=0;
+        for(ArrayList<Peca> e : tabuleiro)
+            if(e.size()==ALTURA)
+                contador++;
+        return contador != LARGURA;
+    }
+
+    public boolean checkMiniGame() {
+        return players.get(vezJogador).getBonus() == 0;
+    }
+
+    public void atualizaBonus() {
+        players.get(vezJogador).decrementaBonus();
     }
 }
+
+

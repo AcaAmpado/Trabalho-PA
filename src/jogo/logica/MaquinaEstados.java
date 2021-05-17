@@ -34,8 +34,8 @@ public class MaquinaEstados {
     }
 
     public boolean comecaJogo(String player1, String player2) {
-        jogo.setPlayer(player1);
-        jogo.setPlayer(player2);
+        jogo.setPlayer(player1, 'A');
+        jogo.setPlayer(player2, 'B');
         if(jogo.comecaJogo()) {
             atual = atual.comecaJogo();
             return true;
@@ -43,12 +43,17 @@ public class MaquinaEstados {
         return false;
     }
 
-    public String getNomeJogadorVez(){return jogo.getNomeJogadorVez();}
-    public TipoJogador getTipoJogador(){return jogo.getTipoJogador();}
-    public Situacao getStatus(){return atual.getStatus();}
+    public String getNomeJogadorVez(){
+        return jogo.getNomeJogadorVez();
+    }
 
+    public TipoJogador getTipoJogador(){
+        return jogo.getTipoJogador();
+    }
 
-    public void jogaAI() { atual.jogaAI();}
+    public Situacao getStatus(){
+        return atual.getStatus();
+    }
 
     public boolean guardaJogo(String nomeSave) {
         return jogo.guardaJogo(nomeSave);
@@ -65,12 +70,69 @@ public class MaquinaEstados {
                 return Erro.Ganhou;
             }
             case ColunaCheia -> {
+                atual=atual.aguardaPassarTurno();
                 return Erro.ColunaCheia;
             }
             case JogadaValida -> {
+                atual=atual.aguardaPassarTurno();
+                return Erro.JogadaValida;
+            }
+            case TabuleiroCheio -> {
+                atual=atual.acabaJogo();
+                return Erro.TabuleiroCheio;
+            }
+        }
+        return Erro.Critico;
+    }
+    public Erro jogaPecaEspecial(int coluna) {
+        switch(jogo.jogaPecaEspecial(coluna)){
+            case SemEspecial -> {
+                return Erro.SemEspecial;
+            }
+            case JogadaValida -> {
+                atual= atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
         }
         return Erro.Critico;
+    }
+
+    public Erro jogaAI() {
+        switch (jogo.jogaAI()) {
+            case Ganhou -> {
+                atual = atual.acabaJogo();
+                return Erro.Ganhou;
+            }
+            case JogadaValida -> {
+                atual = atual.aguardaPassarTurno();
+                return Erro.JogadaValida;
+            }
+            case TabuleiroCheio -> {
+                atual = atual.acabaJogo();
+                return Erro.TabuleiroCheio;
+            }
+        }
+        return Erro.Critico;
+    }
+
+    public void passaTurno() {
+        jogo.setVezJogador();
+        jogo.atualizaBonus();
+        if(jogo.checkMiniGame())
+            atual=atual.decideMiniGame();
+        else
+            atual=atual.passaTurno();
+    }
+
+    public void terminaJogo() {
+        atual=atual.terminaJogo();
+    }
+
+    public void startMiniGame() {
+        atual=atual.startMiniGame();
+    }
+
+    public void semMiniGame() {
+        atual=atual.passaTurno();
     }
 }

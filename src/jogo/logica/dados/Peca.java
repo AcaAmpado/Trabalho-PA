@@ -6,18 +6,16 @@ import java.util.Arrays;
 import jogo.logica.dados.Jogador;
 
 public class Peca {
-    private Jogador jogador;
-    private int [] coordenadas;
-    private int symbol;
+    private final Jogador jogador;
+    private final int [] coordenadas;
 
-    public Peca(Jogador jogador, int numJog, int [] coordenadas){
+    public Peca(Jogador jogador, int [] coordenadas){
         this.jogador=jogador;
         this.coordenadas=coordenadas;
-        this.symbol=numJog;
     }
 
-    public int getSymbol(){
-        return symbol;
+    public char getSymbol(){
+        return jogador.getSymbol();
     }
 
     @Override
