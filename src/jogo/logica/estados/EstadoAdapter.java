@@ -62,6 +62,12 @@ public abstract class EstadoAdapter implements IEstado {
     public IEstado comecaJogo() {
         return null;
     }
+
+    @Override
+    public IEstado continuaJogada() {
+        return null;
+    }
+
     @Override
     public IEstado selGameMode() {
         return null;

@@ -2,9 +2,16 @@ package jogo.logica;
 
 import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
+import jogo.logica.dados.minigames.EscrevePalavras;
+import jogo.logica.dados.minigames.RandomContas;
 import jogo.logica.estados.IEstado;
 import jogo.logica.dados.Jogo;
 import jogo.logica.estados.Inicio;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MaquinaEstados {
 
@@ -70,7 +77,6 @@ public class MaquinaEstados {
                 return Erro.Ganhou;
             }
             case ColunaCheia -> {
-                atual=atual.aguardaPassarTurno();
                 return Erro.ColunaCheia;
             }
             case JogadaValida -> {
@@ -134,5 +140,44 @@ public class MaquinaEstados {
 
     public void semMiniGame() {
         atual=atual.passaTurno();
+    }
+
+    public int getMiniJogo() {
+        return jogo.getMiniJogo();
+    }
+
+    public int jogaRandomContas() {
+        int pontos;
+        RandomContas minijogo = new RandomContas();
+        pontos = minijogo.joga();
+        if(pontos>=5){
+            jogo.addPecaEspecial();
+            atual=atual.continuaJogada();
+        }
+        else{
+            atual=atual.passaTurno();
+        }
+        jogo.resetBonus();
+        return pontos ;
+
+    }
+
+    public int jogaEscrevePalavras() {
+        int pontos;
+        EscrevePalavras minijogo = new EscrevePalavras();
+        pontos = minijogo.joga();
+        if(pontos>=5){
+            jogo.addPecaEspecial();
+            atual=atual.continuaJogada();
+        }
+        else{
+            atual=atual.passaTurno();
+        }
+        jogo.resetBonus();
+        return pontos ;
+    }
+
+    public int getPecaEspecial() {
+        return jogo.getPecaEspecial();
     }
 }

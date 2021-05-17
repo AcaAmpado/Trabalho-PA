@@ -28,4 +28,6 @@ public interface IEstado {
     IEstado decideMiniGame();
 
     IEstado startMiniGame();
+
+    IEstado continuaJogada();
 }

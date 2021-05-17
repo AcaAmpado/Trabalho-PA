@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 public class Jogo {
     public static final int NUMCREDITOS = 5;
-    public static final int RONDASPBONUS = 4;
+    public static final int RONDASPBONUS = 5;
     public static final int LARGURA = 7;
     public static final int ALTURA = 6;
+    private static final int NUMMG = 2; //Num de minijogos
     private int tipo;
     private final ArrayList<Jogador>  players;
     private final ArrayList<ArrayList<Peca>> tabuleiro;
@@ -19,6 +20,7 @@ public class Jogo {
             tabuleiro.add(new ArrayList<>());
         }
     }
+    /*
     // ------------ Logs ------------
 
     ArrayList<String> log = new ArrayList<>();
@@ -36,7 +38,7 @@ public class Jogo {
     }
 
     // ------------------------
-
+    */
     public void setTipo(int tipo){
         this.tipo = tipo;
     }
@@ -210,6 +212,20 @@ public class Jogo {
 
     public void atualizaBonus() {
         players.get(vezJogador).decrementaBonus();
+    }
+
+    public void resetBonus(){ players.get(vezJogador).SetBonus(RONDASPBONUS);}
+
+    public void addPecaEspecial(){
+        this.players.get(vezJogador).AdicionaPecaEspecial();
+    }
+
+    public int getMiniJogo() {
+        return (int) (Math.random()*NUMMG);
+    }
+
+    public int getPecaEspecial() {
+        return players.get(vezJogador).getPecaEspecial();
     }
 }
 

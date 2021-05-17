@@ -4,6 +4,13 @@ import jogo.logica.MaquinaEstados;
 import jogo.logica.dados.Jogo;
 import jogo.auxfunc.auxFunc;
 import jogo.logica.dados.TipoJogador;
+import jogo.logica.dados.minigames.EscrevePalavras;
+import jogo.logica.dados.minigames.RandomContas;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class QuatroUI {
     MaquinaEstados maquinaEstados;
@@ -128,7 +135,8 @@ public class QuatroUI {
 
         }
         else{
-            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Sair")) {
+            System.out.println("Peças Especiais: "+maquinaEstados.getPecaEspecial());
+            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Jogar Peca Especial", "Sair")) {
                 case 1:
                     switch(maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1)){
                         case Ganhou -> System.out.println("Ganhou Poggies");
@@ -147,6 +155,10 @@ public class QuatroUI {
                     utilizaCreditos();
                     break;
                 case 4:
+                    if(maquinaEstados.getPecaEspecial()==0){
+                        System.out.println("Nao tem pecas especiais para jogar");
+                        break;
+                    }
                     maquinaEstados.jogaPecaEspecial(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1);
                     break;
                 case 0:
@@ -175,6 +187,8 @@ public class QuatroUI {
                     System.out.println("Erro a guardar Jogo!");
                     return false;
                 }
+                return true;
+            case 2:
                 return true;
             case 0:
                 return false;
@@ -238,6 +252,7 @@ public class QuatroUI {
         }
     }
     private void uiDecisao(){
+        System.out.println("Jogador "+maquinaEstados.getNomeJogadorVez());
         System.out.println("Pretende jogar um minijogo para ganhar uma peça especial?");
         switch (auxFunc.escolherOpcao("Jogar minijogo", "Continuar sem minijogo")) {
             case 1 -> maquinaEstados.startMiniGame();
@@ -247,6 +262,30 @@ public class QuatroUI {
 
     private void uiMiniGame(){
         //TODO MINIGAMES
+        switch (maquinaEstados.getMiniJogo()){
+            case 0 -> {
+                System.out.println(RandomContas.rules());
+                if(maquinaEstados.jogaRandomContas()>=5){
+                    System.out.println("Ganhou uma Peça Especial");
+                }
+                else {
+                    System.out.println("Perdeu o minijogo");
+                }
+            }
+            case 1 -> {
+                System.out.println(EscrevePalavras.rules());
+                if(maquinaEstados.jogaEscrevePalavras()>=5){
+                    System.out.println("Ganhou uma Peça Especial");
+                }
+                    else {
+                    System.out.println("Perdeu o minijogo");
+                }
+            }
+
+        }
+    }
+
+    private void uiMGPalavras() {
     }
 
     private void uiGameOver(){

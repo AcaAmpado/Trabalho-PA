@@ -10,8 +10,19 @@ public class MiniGame extends EstadoAdapter{
     }
 
     @Override
+    public IEstado passaTurno() {
+        return new PassarTurno(jogo);
+    }
+
+    @Override
+    public IEstado continuaJogada() {
+        return new Jogada(jogo);
+    }
+
+    @Override
     public Situacao getStatus() {
         return Situacao.MiniGame;
     }
+
 }
 

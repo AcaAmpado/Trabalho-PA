@@ -65,4 +65,5 @@ public class Jogador {
     public void decrementaBonus() {
         this.rondasBonus--;
     }
+
 }
