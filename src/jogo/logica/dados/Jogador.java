@@ -1,25 +1,38 @@
 package jogo.logica.dados;
 
-public class Jogador {
+public class Jogador implements Cloneable {
 
-    private String nome;
-    private TipoJogador tipo;
+    private final String nome;
+    private final TipoJogador tipo;
+    private final char symbol;
     private int creditos;
     private int rondasBonus;
     private int pecaEspecial;
-    private char symbol;
+    private int minigame;
 
-    public Jogador(String nome, TipoJogador tipo,char symbol){
-        this.nome=nome;
-        this.tipo=tipo;
-        this.creditos=0;
-        this.rondasBonus=-1;
-        this.pecaEspecial=0;
+    public Jogador(String nome, TipoJogador tipo, char symbol, int numMG) {
+        this.nome = nome;
+        this.tipo = tipo;
         this.symbol = symbol;
+        this.creditos = 0;
+        this.rondasBonus = -1;
+        this.pecaEspecial = 0;
+        this.minigame = (int) (Math.random() * numMG);
     }
 
     public TipoJogador GetTipo(){
         return tipo;
+    }
+
+    public int getMinigame(){
+        return minigame;
+    }
+
+    public void setMinigame(int numMG) {
+        if(minigame < numMG-1)
+            minigame++;
+        else
+            minigame=0;
     }
 
     public void SetCreditos(int creditos){
@@ -33,10 +46,7 @@ public class Jogador {
     public void AdicionaPecaEspecial(){
         this.pecaEspecial++;
     }
-    @Override
-    public String toString() {
-        return "Jogador: "+nome+" - "+tipo.toString()+" - "+ creditos +" - "+ rondasBonus;
-    }
+
 
     public String getNome() {
         return nome;
@@ -66,4 +76,9 @@ public class Jogador {
         this.rondasBonus--;
     }
 
+
+    @Override
+    public String toString() {
+        return "Jogador: "+nome+" - S "+ symbol +" - Tp "+tipo.toString()+" - Cr "+ creditos +" - RB "+ rondasBonus + " - PE "+ pecaEspecial +" - MG "+ minigame;
+    }
 }

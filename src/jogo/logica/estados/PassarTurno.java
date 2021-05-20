@@ -16,6 +16,11 @@ public class PassarTurno extends EstadoAdapter{
     }
 
     @Override
+    public IEstado acabaJogo() {
+        return new GameOver(jogo);
+    }
+
+    @Override
     public IEstado passaTurno() {
         return new Jogada(jogo);
     }

@@ -2,28 +2,27 @@ package jogo.logica;
 
 import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
-import jogo.logica.dados.minigames.EscrevePalavras;
-import jogo.logica.dados.minigames.RandomContas;
 import jogo.logica.estados.IEstado;
 import jogo.logica.dados.Jogo;
 import jogo.logica.estados.Inicio;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 public class MaquinaEstados {
 
     Jogo jogo;
     IEstado atual;
-
+    ArrayList<ArrayList<Jogo>> Historico;
+    ArrayList<Jogo> tempJogo;
+    
     public MaquinaEstados(){
         jogo = new Jogo();
         atual = new Inicio(jogo);
+        Historico = new ArrayList<>();
     }
 
     public void start() {
+        jogo.setupJogo();
         atual = atual.start();
     }
 
@@ -33,7 +32,7 @@ public class MaquinaEstados {
     }
 
     public void carregaJogo() {
-        atual = atual.carregaJogo();
+        //TODO CarregaJogo
     }
 
     public void historicoJogos() {
@@ -44,7 +43,9 @@ public class MaquinaEstados {
         jogo.setPlayer(player1, 'A');
         jogo.setPlayer(player2, 'B');
         if(jogo.comecaJogo()) {
-            atual = atual.comecaJogo();
+            atual = atual.comecaJogo(); //TODO adiciona GuardaState
+            tempJogo = new ArrayList<>();
+            guardaState();
             return true;
         }
         return false;
@@ -72,18 +73,23 @@ public class MaquinaEstados {
 
     public Erro fazJogada(int coluna) {
         switch(jogo.fazJogada(coluna)){
-            case Ganhou -> {
+            case Ganhou -> { //TODO adiciona GuardaState
+                guardaState();
+                Historico.add(tempJogo);
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
             case ColunaCheia -> {
                 return Erro.ColunaCheia;
             }
-            case JogadaValida -> {
+            case JogadaValida -> {//TODO adiciona GuardaState
+                guardaState();
                 atual=atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
-            case TabuleiroCheio -> {
+            case TabuleiroCheio -> { //TODO adiciona GuardaState
+                guardaState();
+                Historico.add(tempJogo);
                 atual=atual.acabaJogo();
                 return Erro.TabuleiroCheio;
             }
@@ -96,7 +102,8 @@ public class MaquinaEstados {
                 return Erro.SemEspecial;
             }
             case JogadaValida -> {
-                atual= atual.aguardaPassarTurno();
+                guardaState();
+                atual= atual.aguardaPassarTurno();  //TODO adiciona GuardaState
                 return Erro.JogadaValida;
             }
         }
@@ -106,19 +113,30 @@ public class MaquinaEstados {
     public Erro jogaAI() {
         switch (jogo.jogaAI()) {
             case Ganhou -> {
+                guardaState();
+                Historico.add(tempJogo);
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
             case JogadaValida -> {
-                atual = atual.aguardaPassarTurno();
+                guardaState();
+                atual = atual.aguardaPassarTurno(); //TODO adiciona GuardaState
                 return Erro.JogadaValida;
             }
             case TabuleiroCheio -> {
-                atual = atual.acabaJogo();
+                guardaState();
+                Historico.add(tempJogo);
+                atual = atual.acabaJogo(); //TODO adiciona GuardaState
                 return Erro.TabuleiroCheio;
             }
         }
         return Erro.Critico;
+    }
+    
+    private void guardaState(){
+        tempJogo.add( (Jogo) jogo.clone());
+        jogo.resetMinijogo();
+        //System.out.println( tempJogo.get(tempJogo.size()-1).toString());
     }
 
     public void passaTurno() {
@@ -140,16 +158,16 @@ public class MaquinaEstados {
 
     public void semMiniGame() {
         atual=atual.passaTurno();
+        jogo.resetBonus(-2);
     }
 
     public int getMiniJogo() {
         return jogo.getMiniJogo();
     }
 
-    public int jogaRandomContas() {
+    public int jogaMinijogo() {
         int pontos;
-        RandomContas minijogo = new RandomContas();
-        pontos = minijogo.joga();
+        pontos=jogo.jogaMinijogo();
         if(pontos>=5){
             jogo.addPecaEspecial();
             atual=atual.continuaJogada();
@@ -157,27 +175,53 @@ public class MaquinaEstados {
         else{
             atual=atual.passaTurno();
         }
-        jogo.resetBonus();
-        return pontos ;
+        jogo.setMinigame();
+        jogo.resetBonus(pontos);
 
-    }
-
-    public int jogaEscrevePalavras() {
-        int pontos;
-        EscrevePalavras minijogo = new EscrevePalavras();
-        pontos = minijogo.joga();
-        if(pontos>=5){
-            jogo.addPecaEspecial();
-            atual=atual.continuaJogada();
-        }
-        else{
-            atual=atual.passaTurno();
-        }
-        jogo.resetBonus();
         return pontos ;
     }
 
     public int getPecaEspecial() {
         return jogo.getPecaEspecial();
+    }
+
+
+    public String getHistorico() {
+        if(Historico.size()==0) {
+            atual=atual.start();
+            return Erro.SemJogosHist.toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < getHistoricoNum(); i++){
+            sb.append("\nJogo ").append(i).append(":").append(getJogoHistorico(i));
+        }
+        return sb.toString();
+    }
+
+    public int getHistoricoNum() {
+        return Historico.size();
+    }
+
+    public String getJogoHistorico(int i) {
+        return String.valueOf(Historico.get(i));
+    }
+
+    public void replayHistorico(int game) {
+        jogo.innitReplay(Historico.get(game));
+        jogo.replayHistorico();
+        atual = atual.aguardaPassarTurno();
+    }
+
+    public boolean isHistorico() {
+        return jogo.getHistorico();
+    }
+
+    public void passaTurnoHistorico() {
+        if(jogo.replayHistorico() == Erro.FimJogo)
+            atual=atual.acabaJogo();
+    }
+
+    public Erro isMinigame() {
+        return jogo.isMinigame();
     }
 }

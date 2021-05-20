@@ -4,7 +4,6 @@ import jogo.logica.Situacao;
 
 public interface IEstado {
 
-
     Situacao getStatus();
 
     IEstado start();

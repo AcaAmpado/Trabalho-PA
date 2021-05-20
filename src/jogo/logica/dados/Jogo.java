@@ -1,24 +1,31 @@
 package jogo.logica.dados;
 
+import jogo.logica.dados.minigames.EscrevePalavras;
+import jogo.logica.dados.minigames.MiniGame;
+import jogo.logica.dados.minigames.RandomContas;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Jogo {
+public class Jogo implements Serializable, Cloneable {
+
+
     public static final int NUMCREDITOS = 5;
-    public static final int RONDASPBONUS = 5;
-    public static final int LARGURA = 7;
-    public static final int ALTURA = 6;
+    public static final int RONDASPBONUS = 4;
+    private static final int LARGURA = 7;
+    private static final int ALTURA = 6;
     private static final int NUMMG = 2; //Num de minijogos
     private int tipo;
-    private final ArrayList<Jogador>  players;
-    private final ArrayList<ArrayList<Peca>> tabuleiro;
+    private ArrayList<Jogador>  players;
+    private ArrayList<ArrayList<Peca>> tabuleiro;
     private int vezJogador;
+    private boolean historico;
+    private ArrayList<Jogo> jogadas;
+    private int jogada;
+    private Erro minijogo;
 
     public Jogo (){
-        players= new ArrayList<>();
-        tabuleiro = new ArrayList<>();
-        for (int i = 0; i < LARGURA ; i++) {
-            tabuleiro.add(new ArrayList<>());
-        }
+       setupJogo();
     }
     /*
     // ------------ Logs ------------
@@ -39,20 +46,30 @@ public class Jogo {
 
     // ------------------------
     */
+
+    public void setupJogo(){
+        players = new ArrayList<>();
+        tabuleiro = new ArrayList<>();
+        for (int i = 0; i < LARGURA ; i++) {
+            tabuleiro.add(new ArrayList<>());
+        }
+        historico = false;
+    }
+
     public void setTipo(int tipo){
         this.tipo = tipo;
     }
 
     public void setPlayer(String nome, char symbol){
         if(tipo==1) // PvP
-            this.players.add(new Jogador(nome,TipoJogador.Player,symbol));
+            this.players.add(new Jogador(nome,TipoJogador.Player,symbol, NUMMG));
         if(tipo==2) //PvAI
             if(players.size()==0)
-                this.players.add(new Jogador(nome,TipoJogador.Player,symbol));
+                this.players.add(new Jogador(nome,TipoJogador.Player,symbol, NUMMG));
             else
-                this.players.add(new Jogador(nome,TipoJogador.AI,symbol));
+                this.players.add(new Jogador(nome,TipoJogador.AI,symbol, NUMMG));
         if(tipo==3) //AIvAI
-            this.players.add(new Jogador(nome,TipoJogador.AI,symbol));
+            this.players.add(new Jogador(nome,TipoJogador.AI,symbol, NUMMG));
     }
 
     public boolean comecaJogo() {
@@ -164,15 +181,15 @@ public class Jogo {
     }
 
     public Erro fazJogada(int coluna) {
-        if(!isPlayable())
-            return Erro.TabuleiroCheio;
         if(tabuleiro.get(coluna).size()>=ALTURA){
             return Erro.ColunaCheia;
         }
-        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador), new int []{coluna,tabuleiro.get(coluna).size()}));
+        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador))); //new int []{coluna,tabuleiro.get(coluna).size()}
         if(isWinner()) {
             return Erro.Ganhou;
         }
+        if(!isPlayable())
+            return Erro.TabuleiroCheio;
         return Erro.JogadaValida;
     }
 
@@ -186,8 +203,7 @@ public class Jogo {
     }
 
     public Erro jogaAI() {
-        if(!isPlayable())
-            return Erro.TabuleiroCheio;
+        minijogo = Erro.AI;
         while(isPlayable()){
             Erro erro = fazJogada((int)(Math.random()*ALTURA));
             if(erro != Erro.ColunaCheia)
@@ -196,6 +212,8 @@ public class Jogo {
         if(isWinner()) {
             return Erro.Ganhou;
         }
+        if(!isPlayable())
+            return Erro.TabuleiroCheio;
         return Erro.JogadaValida;
     }
     public Boolean isPlayable(){
@@ -214,18 +232,96 @@ public class Jogo {
         players.get(vezJogador).decrementaBonus();
     }
 
-    public void resetBonus(){ players.get(vezJogador).SetBonus(RONDASPBONUS);}
+    public void resetBonus(int pontos){
+        players.get(vezJogador).SetBonus(RONDASPBONUS);
+        if(pontos == -2){
+            minijogo = Erro.NaoJogou;
+        }else if (pontos < 5){
+            minijogo = Erro.Perdeu;
+        }else{
+            minijogo = Erro.Ganhou;
+        }
+    }
 
     public void addPecaEspecial(){
         this.players.get(vezJogador).AdicionaPecaEspecial();
     }
 
     public int getMiniJogo() {
-        return (int) (Math.random()*NUMMG);
+        return players.get(vezJogador).getMinigame();
     }
 
     public int getPecaEspecial() {
         return players.get(vezJogador).getPecaEspecial();
+    }
+
+    public void setMinigame() {
+        players.get(vezJogador).setMinigame(NUMMG);
+    }
+
+    public int jogaMinijogo(){
+        MiniGame minijogo;
+        switch (getMiniJogo()){
+            case 0 -> minijogo = new RandomContas();
+            case 1 -> minijogo = new EscrevePalavras();
+            default -> {
+                return -1;
+            }
+        }
+        return minijogo.joga();
+    }
+
+
+    @Override
+    public Object clone(){
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Jogo{" +
+                "tipo=" + tipo +
+                ", players=" + players +
+                ", vezJogador=" + vezJogador +
+                ", \ntabuleiro=" + getBoard()+
+                '}';
+    }
+
+    public Erro replayHistorico() {
+        jogada++;
+        try{
+            this.vezJogador= jogadas.get(jogada).vezJogador;
+            this.tipo = jogadas.get(jogada).tipo;
+            this.tabuleiro = jogadas.get(jogada).tabuleiro;
+           // if(players.get(vezJogador).getBonus()==0 && players.get(vezJogador).getPecaEspecial())
+
+            this.players = jogadas.get(jogada).players;
+        }catch (IndexOutOfBoundsException ignored){
+            return Erro.FimJogo;
+        }
+        return Erro.JogadaValida;
+    }
+
+    public boolean getHistorico() {
+        return historico;
+    }
+
+    public void innitReplay(ArrayList<Jogo> jogos) {
+        historico=true;
+        jogadas = jogos;
+        jogada = -1;
+    }
+
+    public Erro isMinigame(){
+        return minijogo;
+    }
+    public void resetMinijogo() {
+        minijogo = Erro.JogadaValida;
     }
 }
 

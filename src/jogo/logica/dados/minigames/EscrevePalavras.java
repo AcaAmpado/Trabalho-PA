@@ -5,10 +5,9 @@ import jogo.auxfunc.*;
 import java.io.*;
 import java.util.*;
 
-public class EscrevePalavras {
+public class EscrevePalavras extends MiniGame{
 
     private final int NUMPALAVRAS=5;
-    private int pontos;
     private final String path = "palavras.txt";
     private ArrayList<String> palavras;
 
@@ -39,6 +38,7 @@ public class EscrevePalavras {
         return "Introduza as palavras separadas por um unico espaço:";
     }
 
+    @Override
     public int joga() {
         ArrayList<String> palavrasEscolhidas = new ArrayList<>();
         String input;
@@ -68,7 +68,7 @@ public class EscrevePalavras {
                     
                 }
                 if(teste==0)
-                    System.out.println("Palavra " + i+1 + " Errada!");
+                    System.out.println("Palavra " + (i+1) + " Errada!");
             }
             if(pontos==NUMPALAVRAS)
                 break;

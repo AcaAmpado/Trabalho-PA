@@ -9,6 +9,11 @@ public class GameOver extends EstadoAdapter{
     }
 
     @Override
+    public IEstado start() {
+        return new GameMode(jogo);
+    }
+
+    @Override
     public Situacao getStatus() {
         return Situacao.GameOver;
     }

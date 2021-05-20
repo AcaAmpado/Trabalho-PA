@@ -10,7 +10,15 @@ public class EscolhaJogoH extends EstadoAdapter{
     }
 
 
+    @Override
+    public IEstado aguardaPassarTurno() {
+        return new PassarTurno(jogo);
+    }
 
+    @Override
+    public IEstado start() {
+        return new GameMode(jogo);
+    }
 
     @Override
     public Situacao getStatus() {

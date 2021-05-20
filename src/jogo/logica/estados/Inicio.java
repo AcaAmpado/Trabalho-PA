@@ -15,7 +15,10 @@ public class Inicio extends EstadoAdapter{
         return new GameMode(jogo);
     }
 
-
+    @Override
+    public IEstado historicoJogos() {
+        return new EscolhaJogoH(jogo);
+    }
 
 
     @Override

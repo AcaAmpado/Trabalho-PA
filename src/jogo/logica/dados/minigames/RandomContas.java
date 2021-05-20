@@ -5,20 +5,20 @@ import jogo.auxfunc.auxFunc;
 import java.text.DecimalFormat;
 
 
-public class RandomContas {
+public class RandomContas extends MiniGame {
     private final int NUMCONTAS=5;
     private final int MIN=1, MAX=10;
-    private int pontos;
+
 
     public RandomContas(){
         pontos=0;
-
     }
 
     public static String rules() {
         return "Introduza o resultado das contas (2 casas decimais nas divisões):";
     }
 
+    @Override
     public int joga() {
 
         long start = System.currentTimeMillis();
@@ -47,7 +47,11 @@ public class RandomContas {
             if(pontos==NUMCONTAS)
                 break;
         }
-        return pontos;
+        if(System.currentTimeMillis() < end){
+            return pontos;
+        }
+        System.out.println("Demorou demasiado tempo!");
+        return 0;
     }
 
     private int randomNum(){
