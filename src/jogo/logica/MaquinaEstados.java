@@ -2,23 +2,26 @@ package jogo.logica;
 
 import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
-import jogo.logica.estados.IEstado;
+import jogo.logica.estados.*;
 import jogo.logica.dados.Jogo;
-import jogo.logica.estados.Inicio;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class MaquinaEstados {
 
     Jogo jogo;
     IEstado atual;
-    ArrayList<ArrayList<Jogo>> Historico;
+    ArrayList<ArrayList<Jogo>> historico;
     ArrayList<Jogo> tempJogo;
     
     public MaquinaEstados(){
         jogo = new Jogo();
         atual = new Inicio(jogo);
-        Historico = new ArrayList<>();
+        historico = new ArrayList<>();
+        try {
+            carregaHistoricoF();
+        }catch (IOException | ClassNotFoundException ignored){}
     }
 
     public void start() {
@@ -31,8 +34,58 @@ public class MaquinaEstados {
         atual = atual.selGameMode();
     }
 
-    public void carregaJogo() {
-        //TODO CarregaJogo
+    public boolean guardaJogo(String nomeSave) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeSave))) {
+            out.writeObject(jogo);
+            out.writeObject(atual.getStatus());
+        } catch (IOException ignored) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean carregaJogo(String name) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(name))) {
+            jogo = (Jogo) in.readObject();
+            atual = switchState((Situacao) in.readObject());
+        } catch (IOException | ClassNotFoundException ignored) {
+            System.out.println("FUCK ME");
+            return false;
+        }
+        return true;
+    }
+
+    private IEstado switchState(Situacao readObject) {
+        switch (readObject){
+            case Inicio -> {
+                return new Inicio(jogo);
+            }
+            case Jogada -> {
+                return new Jogada(jogo);
+            }
+            case DecisaoMiniGame  -> {
+                return new DecisaoMiniGame(jogo);
+            }
+            case MiniGame -> {
+                return new MiniGame(jogo);
+            }
+            case GameMode -> {
+                return new GameMode(jogo);
+            }
+            case GameOver -> {
+                return new GameOver(jogo);
+            }
+            case PassarTurno -> {
+                return new PassarTurno(jogo);
+            }
+            case NamePlayers -> {
+                return new NamePlayers(jogo);
+            }
+            case Historico -> {
+                return new EscolhaJogoH(jogo);
+            }
+        }
+        return null;
     }
 
     public void historicoJogos() {
@@ -43,7 +96,7 @@ public class MaquinaEstados {
         jogo.setPlayer(player1, 'A');
         jogo.setPlayer(player2, 'B');
         if(jogo.comecaJogo()) {
-            atual = atual.comecaJogo(); //TODO adiciona GuardaState
+            atual = atual.comecaJogo();
             tempJogo = new ArrayList<>();
             guardaState();
             return true;
@@ -63,9 +116,7 @@ public class MaquinaEstados {
         return atual.getStatus();
     }
 
-    public boolean guardaJogo(String nomeSave) {
-        return jogo.guardaJogo(nomeSave);
-    }
+
 
     public StringBuilder getBoard() {
         return jogo.getBoard();
@@ -73,70 +124,69 @@ public class MaquinaEstados {
 
     public Erro fazJogada(int coluna) {
         switch(jogo.fazJogada(coluna)){
-            case Ganhou -> { //TODO adiciona GuardaState
+            case Ganhou -> {
                 guardaState();
-                Historico.add(tempJogo);
+                jogoParaHist(tempJogo);
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
             case ColunaCheia -> {
                 return Erro.ColunaCheia;
             }
-            case JogadaValida -> {//TODO adiciona GuardaState
+            case JogadaValida -> {
                 guardaState();
                 atual=atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
-            case TabuleiroCheio -> { //TODO adiciona GuardaState
+            case TabuleiroCheio -> {
                 guardaState();
-                Historico.add(tempJogo);
+                jogoParaHist(tempJogo);
                 atual=atual.acabaJogo();
                 return Erro.TabuleiroCheio;
             }
         }
         return Erro.Critico;
     }
-    public Erro jogaPecaEspecial(int coluna) {
-        switch(jogo.jogaPecaEspecial(coluna)){
-            case SemEspecial -> {
-                return Erro.SemEspecial;
-            }
-            case JogadaValida -> {
-                guardaState();
-                atual= atual.aguardaPassarTurno();  //TODO adiciona GuardaState
-                return Erro.JogadaValida;
-            }
+    public void jogaPecaEspecial(int coluna) {
+        if (jogo.jogaPecaEspecial(coluna) == Erro.JogadaValida) {
+            guardaState();
+            atual = atual.aguardaPassarTurno();
         }
-        return Erro.Critico;
     }
 
     public Erro jogaAI() {
         switch (jogo.jogaAI()) {
             case Ganhou -> {
                 guardaState();
-                Historico.add(tempJogo);
+                jogoParaHist(tempJogo);
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
             case JogadaValida -> {
                 guardaState();
-                atual = atual.aguardaPassarTurno(); //TODO adiciona GuardaState
+                atual = atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
             case TabuleiroCheio -> {
                 guardaState();
-                Historico.add(tempJogo);
-                atual = atual.acabaJogo(); //TODO adiciona GuardaState
+                jogoParaHist(tempJogo);
+                atual = atual.acabaJogo();
                 return Erro.TabuleiroCheio;
             }
         }
         return Erro.Critico;
     }
-    
+
+    private void jogoParaHist(ArrayList<Jogo> tempJogo) {
+        historico.add(tempJogo);
+        if(historico.size()>5){
+            historico.remove(0);
+        }
+    }
+
     private void guardaState(){
         tempJogo.add( (Jogo) jogo.clone());
         jogo.resetMinijogo();
-        //System.out.println( tempJogo.get(tempJogo.size()-1).toString());
     }
 
     public void passaTurno() {
@@ -186,8 +236,8 @@ public class MaquinaEstados {
     }
 
 
-    public String getHistorico() {
-        if(Historico.size()==0) {
+    public String getHist() {
+        if(historico.size()==0) {
             atual=atual.start();
             return Erro.SemJogosHist.toString();
         }
@@ -199,21 +249,21 @@ public class MaquinaEstados {
     }
 
     public int getHistoricoNum() {
-        return Historico.size();
+        return historico.size();
     }
 
     public String getJogoHistorico(int i) {
-        return String.valueOf(Historico.get(i).get(0).toString());
+        return historico.get(i).get(0).toString();
     }
 
     public void replayHistorico(int game) {
-        jogo.innitReplay(Historico.get(game));
+        jogo.innitReplay(historico.get(game));
         jogo.replayHistorico();
         atual = atual.aguardaPassarTurno();
     }
 
     public boolean isHistorico() {
-        return jogo.getHistorico();
+        return jogo.isHistorico();
     }
 
     public void passaTurnoHistorico() {
@@ -223,5 +273,18 @@ public class MaquinaEstados {
 
     public Erro isMinigame() {
         return jogo.isMinigame();
+    }
+
+    public void guardaHistoricoF() throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("Historico.dat"))) {
+            out.writeObject(historico);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void carregaHistoricoF() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("Historico.dat"))) {
+            historico = (ArrayList<ArrayList<Jogo>>) in.readObject();
+        }
     }
 }

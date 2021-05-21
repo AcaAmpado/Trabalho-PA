@@ -8,10 +8,7 @@ import jogo.logica.dados.TipoJogador;
 import jogo.logica.dados.minigames.EscrevePalavras;
 import jogo.logica.dados.minigames.RandomContas;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 public class QuatroUI {
     MaquinaEstados maquinaEstados;
@@ -74,7 +71,7 @@ public class QuatroUI {
                 }
                 break;
             case 2: //Carregar jogo
-                maquinaEstados.carregaJogo();
+                uiCarrega();
                 break;
             case 3:// Ver jogos anteriores
                 maquinaEstados.historicoJogos();
@@ -112,7 +109,10 @@ public class QuatroUI {
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Sair")) {
                 case 1:
                     switch(maquinaEstados.jogaAI()){
-                        case TabuleiroCheio -> System.out.println("Jogo empatou!");
+                        case TabuleiroCheio -> {
+                            System.out.println(maquinaEstados.getBoard());
+                            System.out.println("Jogo empatou!");
+                        }
                         case JogadaValida -> {}
                         case Ganhou -> {
                             System.out.println(maquinaEstados.getBoard());
@@ -143,10 +143,16 @@ public class QuatroUI {
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Jogar Peca Especial", "Sair")) {
                 case 1:
                     switch(maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1)){
-                        case Ganhou -> System.out.println("Ganhou Poggies");
+                        case Ganhou -> {
+                            System.out.println(maquinaEstados.getBoard());
+                            System.out.println("Ganhou!");
+                        }
                         case ColunaCheia -> System.out.println("Jogada inválida! A coluna já está cheia");
                         case JogadaValida -> {}
-                        case TabuleiroCheio -> System.out.println("Jogo Empatou!");
+                        case TabuleiroCheio -> {
+                            System.out.println(maquinaEstados.getBoard());
+                            System.out.println("Jogo Empatou!");
+                        }
                         default -> {
                             System.out.println("Erro critico!");
                             maquinaEstados.terminaJogo();
@@ -188,7 +194,7 @@ public class QuatroUI {
         System.out.println("Pretende Guardar antes de sair?");
         switch (auxFunc.escolherOpcao("Guardar e Sair", "Sair sem Guardar", "Cancelar")) {
             case 1:
-                if(!guardaJogo()){
+                if(guardaJogo()){
                     System.out.println("Erro a guardar Jogo!");
                     return false;
                 }
@@ -203,15 +209,18 @@ public class QuatroUI {
         }
     }
     private boolean guardaJogo(){
-        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:"));
+        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:")+".dat");
     }
 
     private void uiCarrega(){
-        //TODO carrega de um ficheiro o jogo
+         if(!maquinaEstados.carregaJogo(auxFunc.pedeString("Introduza o nome do ficheiro que pretende carregar:")+".dat")){
+             System.out.println("Não foi possivel carregar o jogo!");
+         }
+         else System.out.println("Jogo carregado com sucesso!");
     }
     private void uiHistorico(){
         //TODO quando tiver record dos jogos
-        String res = maquinaEstados.getHistorico();
+        String res = maquinaEstados.getHist();
         if(res.equals(Erro.SemJogosHist.toString())){
             System.out.println("Não existem jogos guardados");
             return;
@@ -222,7 +231,7 @@ public class QuatroUI {
     }
 
     private void uiPassarTurno(){
-        if(maquinaEstados.isHistorico()) {
+        if( maquinaEstados.isHistorico() ) {
             if(maquinaEstados.isMinigame() == Erro.Perdeu){
                 System.out.println("O jogador jogou um minijogo e perdeu!");
             }else if (maquinaEstados.isMinigame() == Erro.Ganhou){
@@ -318,6 +327,9 @@ public class QuatroUI {
         switch (auxFunc.escolherOpcao("Continuar", "Sair")) {
             case 1 -> maquinaEstados.start();
             case 0 -> {
+                try{
+                maquinaEstados.guardaHistoricoF();
+                }catch (IOException ignored){}
                 System.out.println("Obrigado por jogar 4 em linha!");
                 sair=true;
             }

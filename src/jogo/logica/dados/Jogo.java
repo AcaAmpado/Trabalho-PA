@@ -4,11 +4,13 @@ import jogo.logica.dados.minigames.EscrevePalavras;
 import jogo.logica.dados.minigames.MiniGame;
 import jogo.logica.dados.minigames.RandomContas;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Jogo implements Serializable, Cloneable {
-
+    @Serial
+    private static final long serialVersionUID = 4L;
 
     public static final int NUMCREDITOS = 5;
     public static final int RONDASPBONUS = 4;
@@ -99,11 +101,6 @@ public class Jogo implements Serializable, Cloneable {
         return players.get(vezJogador).getNome();
     }
 
-    public boolean guardaJogo(String nomeSave) {
-        //TODO Guardar todos os dados relevantes para ficheiro
-        return true;
-    }
-
 
     public StringBuilder getBoard() {
         StringBuilder board= new StringBuilder();
@@ -184,7 +181,7 @@ public class Jogo implements Serializable, Cloneable {
         if(tabuleiro.get(coluna).size()>=ALTURA){
             return Erro.ColunaCheia;
         }
-        tabuleiro.get(coluna).add(new Peca(vezJogador)); //new int []{coluna,tabuleiro.get(coluna).size()}
+        tabuleiro.get(coluna).add(new Peca(vezJogador));
         if(isWinner()) {
             return Erro.Ganhou;
         }
@@ -303,8 +300,8 @@ public class Jogo implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return "| "+players.get(0).getTipo().toString()+" - " + players.get(0).getNome()+ " vs " +
-                " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" |";
+        return "| "+players.get(0).getTipo().toString()+" - " + players.get(0).getNome()+" Simb: "+ players.get(0).getSymbol() +" vs " +
+                " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" Simb: "+ players.get(0).getSymbol() +" |";
     }
 
     public Erro replayHistorico() {
@@ -323,7 +320,7 @@ public class Jogo implements Serializable, Cloneable {
         return Erro.JogadaValida;
     }
 
-    public boolean getHistorico() {
+    public boolean isHistorico() {
         return historico;
     }
 
@@ -339,6 +336,9 @@ public class Jogo implements Serializable, Cloneable {
 
     public void resetMinijogo() {
         minijogo = Erro.JogadaValida;
+    }
+
+    public void setEstado() {
     }
 }
 

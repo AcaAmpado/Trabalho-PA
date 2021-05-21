@@ -1,8 +1,11 @@
 package jogo.logica.dados;
 
-import java.util.Arrays;
+import java.io.Serial;
+import java.io.Serializable;
 
-public class Peca implements  Cloneable {
+public class Peca implements  Cloneable, Serializable {
+    @Serial
+    private static final long serialVersionUID = 4L;
     private final int jogador;
 
     public Peca(int jogador){
@@ -17,8 +20,7 @@ public class Peca implements  Cloneable {
     public Object clone(){
         try {
             return super.clone();
-        } catch (CloneNotSupportedException e) {
-            System.out.println("Rebentei na Peca!");
+        } catch (CloneNotSupportedException ignored) {
         }
         return null;
     }

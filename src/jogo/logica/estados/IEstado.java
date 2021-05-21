@@ -12,8 +12,6 @@ public interface IEstado {
 
     IEstado selGameMode();
 
-    IEstado carregaJogo();
-
     IEstado historicoJogos();
 
     IEstado acabaJogo();

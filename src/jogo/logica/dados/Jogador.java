@@ -1,6 +1,11 @@
 package jogo.logica.dados;
 
-public class Jogador implements Cloneable {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Jogador implements Cloneable, Serializable {
+    @Serial
+    private static final long serialVersionUID = 4L;
 
     private final String nome;
     private final TipoJogador tipo;
@@ -80,8 +85,7 @@ public class Jogador implements Cloneable {
     protected Object clone() throws CloneNotSupportedException {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException e) {
-            System.out.println("Rebentei no jogador!");
+        } catch (CloneNotSupportedException ignored) {
         }
         return null;
     }
