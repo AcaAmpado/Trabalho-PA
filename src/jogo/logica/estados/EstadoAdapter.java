@@ -14,11 +14,6 @@ public abstract class EstadoAdapter implements IEstado {
     }
 
     @Override
-    public IEstado carregaJogo() {
-        return null;
-    }
-
-    @Override
     public IEstado historicoJogos() {
         return null;
     }
