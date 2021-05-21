@@ -76,6 +76,15 @@ public class Jogador implements Cloneable {
         this.rondasBonus--;
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println("Rebentei no jogador!");
+        }
+        return null;
+    }
 
     @Override
     public String toString() {

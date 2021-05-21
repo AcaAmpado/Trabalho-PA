@@ -115,7 +115,7 @@ public class Jogo implements Serializable, Cloneable {
                 if(i >= tabuleiro.get(j).size())
                     board.append("  | ");
                 else
-                   board.append(tabuleiro.get(j).get(i).getSymbol()).append(" | ");
+                   board.append(players.get(tabuleiro.get(j).get(i).getJogador()).getSymbol()).append(" | ");
             }
             board.append("\n");
         }
@@ -133,11 +133,11 @@ public class Jogo implements Serializable, Cloneable {
         for(int linha = 0; linha<ALTURA;linha++){ // verifica se tem na horizontal
             for(int col = 0; col<LARGURA-3;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col+1).get(linha).getSymbol()
-                    && tabuleiro.get(col+1).get(linha).getSymbol() == tabuleiro.get(col+2).get(linha).getSymbol()
-                    && tabuleiro.get(col+2).get(linha).getSymbol() == tabuleiro.get(col+3).get(linha).getSymbol()){
+                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+1).get(linha).getJogador()).getSymbol()
+                    && players.get(tabuleiro.get(col+1).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol()
+                    && players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+3).get(linha).getJogador()).getSymbol()){
                         return true;
-                    }
+                    }//players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol()
                 }catch (IndexOutOfBoundsException ignored){}
             }
         }
@@ -145,9 +145,9 @@ public class Jogo implements Serializable, Cloneable {
         for(int col = 0; col<LARGURA;col++){ // verifica se tem na vertical
             for(int linha = 0; linha<ALTURA-3;linha++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col).get(linha+1).getSymbol()
-                            && tabuleiro.get(col).get(linha+1).getSymbol() == tabuleiro.get(col).get(linha+2).getSymbol()
-                            && tabuleiro.get(col).get(linha+2).getSymbol() == tabuleiro.get(col).get(linha+3).getSymbol()){
+                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+1).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col).get(linha+1).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+2).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col).get(linha+2).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+3).getJogador()).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -157,9 +157,9 @@ public class Jogo implements Serializable, Cloneable {
         for(int linha = 3; linha<ALTURA;linha++){ // verifica se tem na diagonal asc
             for(int col = 0; col < LARGURA-3;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col-1).get(linha-1).getSymbol()
-                            && tabuleiro.get(col-1).get(linha-1).getSymbol() == tabuleiro.get(col-2).get(linha-2).getSymbol()
-                            && tabuleiro.get(col-2).get(linha-2).getSymbol() == tabuleiro.get(col-3).get(linha-3).getSymbol()){
+                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col-1).get(linha-1).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col-1).get(linha-1).getJogador()).getSymbol() == players.get(tabuleiro.get(col-2).get(linha-2).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col-2).get(linha-2).getJogador()).getSymbol() == players.get(tabuleiro.get(col-3).get(linha-3).getJogador()).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -169,9 +169,9 @@ public class Jogo implements Serializable, Cloneable {
         for(int linha = 3; linha < ALTURA ;linha++){ // verifica se tem na diagonal desc
             for(int col = 0; col < LARGURA - 3 ;col++){
                 try{
-                    if(tabuleiro.get(col).get(linha).getSymbol() == tabuleiro.get(col+1).get(linha-1).getSymbol()
-                            && tabuleiro.get(col+1).get(linha-1).getSymbol() == tabuleiro.get(col+2).get(linha-2).getSymbol()
-                            && tabuleiro.get(col+2).get(linha-2).getSymbol() == tabuleiro.get(col+3).get(linha-3).getSymbol()){
+                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+1).get(linha-1).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col+1).get(linha-1).getJogador()).getSymbol() == players.get(tabuleiro.get(col+2).get(linha-2).getJogador()).getSymbol()
+                            && players.get(tabuleiro.get(col+2).get(linha-2).getJogador()).getSymbol() == players.get(tabuleiro.get(col+3).get(linha-3).getJogador()).getSymbol()){
                         return true;
                     }
                 }catch (IndexOutOfBoundsException ignored){}
@@ -184,16 +184,18 @@ public class Jogo implements Serializable, Cloneable {
         if(tabuleiro.get(coluna).size()>=ALTURA){
             return Erro.ColunaCheia;
         }
-        tabuleiro.get(coluna).add(new Peca(players.get(vezJogador))); //new int []{coluna,tabuleiro.get(coluna).size()}
+        tabuleiro.get(coluna).add(new Peca(vezJogador)); //new int []{coluna,tabuleiro.get(coluna).size()}
         if(isWinner()) {
             return Erro.Ganhou;
         }
         if(!isPlayable())
             return Erro.TabuleiroCheio;
+        minijogo=Erro.JogadaValida;
         return Erro.JogadaValida;
     }
 
     public Erro jogaPecaEspecial(int coluna) {
+        minijogo=Erro.JogadaValida;
         if(players.get(vezJogador).getPecaEspecial()==0){
             return Erro.SemEspecial;
         }
@@ -274,22 +276,35 @@ public class Jogo implements Serializable, Cloneable {
 
     @Override
     public Object clone(){
+        Jogo clone = null;
         try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            clone=(Jogo)super.clone();
+            clone.tipo = this.tipo ;
+            clone.vezJogador=this.vezJogador;
+            ArrayList<Jogador> clonePlayers = new ArrayList<>(players.size());
+
+            for(Jogador jog:players) // Clone de Jogadores
+                clonePlayers.add((Jogador) jog.clone());
+
+            clone.players=clonePlayers;
+
+            ArrayList<ArrayList<Peca>> cloneTabuleiro = new ArrayList<>(); //Clone de Tabuleiro
+            for (int i = 0; i < LARGURA ; i++) {
+                cloneTabuleiro.add(new ArrayList<>());
+                for(int j=0;j<tabuleiro.get(i).size();j++ ){
+                    cloneTabuleiro.get(i).add(new Peca(tabuleiro.get(i).get(j).getJogador()));
+                }
+            }
+            clone.tabuleiro=cloneTabuleiro;
+        } catch (CloneNotSupportedException ignored) {
         }
-        return null;
+        return clone;
     }
 
     @Override
     public String toString() {
-        return "Jogo{" +
-                "tipo=" + tipo +
-                ", players=" + players +
-                ", vezJogador=" + vezJogador +
-                ", \ntabuleiro=" + getBoard()+
-                '}';
+        return "| "+players.get(0).getTipo().toString()+" - " + players.get(0).getNome()+ " vs " +
+                " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" |";
     }
 
     public Erro replayHistorico() {
@@ -298,9 +313,10 @@ public class Jogo implements Serializable, Cloneable {
             this.vezJogador= jogadas.get(jogada).vezJogador;
             this.tipo = jogadas.get(jogada).tipo;
             this.tabuleiro = jogadas.get(jogada).tabuleiro;
-           // if(players.get(vezJogador).getBonus()==0 && players.get(vezJogador).getPecaEspecial())
-
+            this.minijogo = jogadas.get(jogada).minijogo;
             this.players = jogadas.get(jogada).players;
+            this.tabuleiro = jogadas.get(jogada).tabuleiro;
+
         }catch (IndexOutOfBoundsException ignored){
             return Erro.FimJogo;
         }
@@ -320,6 +336,7 @@ public class Jogo implements Serializable, Cloneable {
     public Erro isMinigame(){
         return minijogo;
     }
+
     public void resetMinijogo() {
         minijogo = Erro.JogadaValida;
     }

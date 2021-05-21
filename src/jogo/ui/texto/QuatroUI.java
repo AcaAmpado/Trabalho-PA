@@ -114,7 +114,10 @@ public class QuatroUI {
                     switch(maquinaEstados.jogaAI()){
                         case TabuleiroCheio -> System.out.println("Jogo empatou!");
                         case JogadaValida -> {}
-                        case Ganhou -> System.out.println("Ganhou Poggies");
+                        case Ganhou -> {
+                            System.out.println(maquinaEstados.getBoard());
+                            System.out.println("Ganhou!");
+                        }
                         default -> {
                             System.out.println("Erro critico!");
                             maquinaEstados.terminaJogo();
@@ -220,12 +223,12 @@ public class QuatroUI {
 
     private void uiPassarTurno(){
         if(maquinaEstados.isHistorico()) {
-            if(maquinaEstados.isMinigame()==Erro.Perdeu){
+            if(maquinaEstados.isMinigame() == Erro.Perdeu){
                 System.out.println("O jogador jogou um minijogo e perdeu!");
-            }else if (maquinaEstados.isMinigame()==Erro.Ganhou){
+            }else if (maquinaEstados.isMinigame() == Erro.Ganhou){
                 System.out.println("O jogador jogou um minijogo e ganhou uma peça especial!");
             }
-            else if(maquinaEstados.isMinigame()==Erro.NaoJogou){
+            else if(maquinaEstados.isMinigame() == Erro.NaoJogou){
                 System.out.println("O jogador optou por nao jogar o minijogo");
             }
             System.out.println(maquinaEstados.getBoard());
@@ -308,9 +311,6 @@ public class QuatroUI {
             }
 
         }
-    }
-
-    private void uiMGPalavras() {
     }
 
     private void uiGameOver(){

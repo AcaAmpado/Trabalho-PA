@@ -193,7 +193,7 @@ public class MaquinaEstados {
         }
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < getHistoricoNum(); i++){
-            sb.append("\nJogo ").append(i).append(":").append(getJogoHistorico(i));
+            sb.append("\nJogo ").append(i+1).append(":").append(getJogoHistorico(i));
         }
         return sb.toString();
     }
@@ -203,7 +203,7 @@ public class MaquinaEstados {
     }
 
     public String getJogoHistorico(int i) {
-        return String.valueOf(Historico.get(i));
+        return String.valueOf(Historico.get(i).get(0).toString());
     }
 
     public void replayHistorico(int game) {
