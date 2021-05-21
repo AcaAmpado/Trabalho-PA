@@ -280,7 +280,7 @@ public class MaquinaEstados {
             out.writeObject(historico);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public void carregaHistoricoF() throws IOException, ClassNotFoundException {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("Historico.dat"))) {
