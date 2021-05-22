@@ -10,7 +10,7 @@ public class MiniGame extends EstadoAdapter{
     }
 
     @Override
-    public IEstado passaTurno() {
+    public IEstado aguardaPassarTurno() {
         return new PassarTurno(jogo);
     }
 

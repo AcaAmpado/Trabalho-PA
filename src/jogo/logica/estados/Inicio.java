@@ -6,18 +6,12 @@ import jogo.logica.dados.Jogo;
 public class Inicio extends EstadoAdapter{
     public Inicio(Jogo jogo) {
         super(jogo);
-
     }
 
 
     @Override
     public IEstado start() {
         return new GameMode(jogo);
-    }
-
-    @Override
-    public IEstado historicoJogos() {
-        return new EscolhaJogoH(jogo);
     }
 
 

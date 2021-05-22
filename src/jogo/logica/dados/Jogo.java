@@ -17,6 +17,7 @@ public class Jogo implements Serializable, Cloneable {
     private static final int LARGURA = 7;
     private static final int ALTURA = 6;
     private static final int NUMMG = 2; //Num de minijogos
+    private int turnoCreditos;
     private int tipo;
     private ArrayList<Jogador>  players;
     private ArrayList<ArrayList<Peca>> tabuleiro;
@@ -56,6 +57,19 @@ public class Jogo implements Serializable, Cloneable {
             tabuleiro.add(new ArrayList<>());
         }
         historico = false;
+        turnoCreditos=0;
+    }
+
+    public int getTurnoCreditos(){
+        return turnoCreditos;
+    }
+
+    public void setTurnoCreditos(){
+        turnoCreditos++;
+    }
+
+    public void resetTurnoCreditos(){
+        turnoCreditos=0;
     }
 
     public void setTipo(int tipo){
@@ -79,9 +93,9 @@ public class Jogo implements Serializable, Cloneable {
             return false;
         }
         for(Jogador jog:players) {
-            if(jog.GetTipo()==TipoJogador.Player){
-                jog.SetBonus(RONDASPBONUS);
-                jog.SetCreditos(NUMCREDITOS);
+            if(jog.getTipo()==TipoJogador.Player){
+                jog.setBonus(RONDASPBONUS);
+                jog.setCreditos(NUMCREDITOS);
             }
         }
         vezJogador= (int) (Math.random()*2);
@@ -232,7 +246,7 @@ public class Jogo implements Serializable, Cloneable {
     }
 
     public void resetBonus(int pontos){
-        players.get(vezJogador).SetBonus(RONDASPBONUS);
+        players.get(vezJogador).setBonus(RONDASPBONUS);
         if(pontos == -2){
             minijogo = Erro.NaoJogou;
         }else if (pontos < 5){
@@ -243,11 +257,19 @@ public class Jogo implements Serializable, Cloneable {
     }
 
     public void addPecaEspecial(){
-        this.players.get(vezJogador).AdicionaPecaEspecial();
+        this.players.get(vezJogador).adicionaPecaEspecial();
     }
 
     public int getMiniJogo() {
         return players.get(vezJogador).getMinigame();
+    }
+
+    public void setPecaEspecial(int vez, int num){
+        players.get(vez).setPecaEspecial(num);
+    }
+
+    public int getPecaEspecial(int vez) {
+        return players.get(vez).getPecaEspecial();
     }
 
     public int getPecaEspecial() {
@@ -270,6 +292,55 @@ public class Jogo implements Serializable, Cloneable {
         return minijogo.joga();
     }
 
+    public Erro replayHistorico() {
+        jogada++;
+        try{
+            this.vezJogador= jogadas.get(jogada).vezJogador;
+            this.tipo = jogadas.get(jogada).tipo;
+            this.tabuleiro = jogadas.get(jogada).tabuleiro;
+            this.minijogo = jogadas.get(jogada).minijogo;
+            this.players = jogadas.get(jogada).players;
+            this.tabuleiro = jogadas.get(jogada).tabuleiro;
+
+        }catch (IndexOutOfBoundsException ignored){
+            return Erro.FimJogo;
+        }
+        return Erro.JogadaValida;
+    }
+
+    public boolean isHistorico() {
+        return historico;
+    }
+
+    public void innitReplay(ArrayList<Jogo> jogos) {
+        historico = true;
+        jogadas = jogos;
+        jogada = -1;
+    }
+
+    public Erro isMinigame(){
+        return minijogo;
+    }
+
+    public void resetMinijogo() {
+        minijogo = Erro.JogadaValida;
+    }
+
+    public int getCreditos() {
+        return players.get(vezJogador).getCreditos();
+    }
+
+   /* public void setCreditos(int i) {
+        players.get(vezJogador).setCreditos(i);
+    }*/
+
+    public void setCreditos(int i,int vez) {
+        players.get(vez).setCreditos(i);
+    }
+
+    public int getVezJogador() {
+        return vezJogador;
+    }
 
     @Override
     public Object clone(){
@@ -301,44 +372,7 @@ public class Jogo implements Serializable, Cloneable {
     @Override
     public String toString() {
         return "| "+players.get(0).getTipo().toString()+" - " + players.get(0).getNome()+" Simb: "+ players.get(0).getSymbol() +" vs " +
-                " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" Simb: "+ players.get(0).getSymbol() +" |";
-    }
-
-    public Erro replayHistorico() {
-        jogada++;
-        try{
-            this.vezJogador= jogadas.get(jogada).vezJogador;
-            this.tipo = jogadas.get(jogada).tipo;
-            this.tabuleiro = jogadas.get(jogada).tabuleiro;
-            this.minijogo = jogadas.get(jogada).minijogo;
-            this.players = jogadas.get(jogada).players;
-            this.tabuleiro = jogadas.get(jogada).tabuleiro;
-
-        }catch (IndexOutOfBoundsException ignored){
-            return Erro.FimJogo;
-        }
-        return Erro.JogadaValida;
-    }
-
-    public boolean isHistorico() {
-        return historico;
-    }
-
-    public void innitReplay(ArrayList<Jogo> jogos) {
-        historico=true;
-        jogadas = jogos;
-        jogada = -1;
-    }
-
-    public Erro isMinigame(){
-        return minijogo;
-    }
-
-    public void resetMinijogo() {
-        minijogo = Erro.JogadaValida;
-    }
-
-    public void setEstado() {
+                " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" Simb: "+ players.get(1).getSymbol() +" |";
     }
 }
 

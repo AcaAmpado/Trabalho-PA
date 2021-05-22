@@ -14,17 +14,22 @@ public class MaquinaEstados {
     IEstado atual;
     ArrayList<ArrayList<Jogo>> historico;
     ArrayList<Jogo> tempJogo;
+    ArrayList<String> logME;
     
     public MaquinaEstados(){
+
         jogo = new Jogo();
-        atual = new Inicio(jogo);
         historico = new ArrayList<>();
+        logME = new ArrayList<>();
+        atual = new Inicio(jogo);
+        logME.add(Situacao.Inicio.toString());
         try {
             carregaHistoricoF();
         }catch (IOException | ClassNotFoundException ignored){}
     }
 
     public void start() {
+
         jogo.setupJogo();
         atual = atual.start();
     }
@@ -38,18 +43,20 @@ public class MaquinaEstados {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeSave))) {
             out.writeObject(jogo);
             out.writeObject(atual.getStatus());
+            out.writeObject(tempJogo);
         } catch (IOException ignored) {
             return false;
         }
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean carregaJogo(String name) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(name))) {
             jogo = (Jogo) in.readObject();
             atual = switchState((Situacao) in.readObject());
+            tempJogo = (ArrayList<Jogo>) in.readObject();
         } catch (IOException | ClassNotFoundException ignored) {
-            System.out.println("FUCK ME");
             return false;
         }
         return true;
@@ -115,8 +122,6 @@ public class MaquinaEstados {
     public Situacao getStatus(){
         return atual.getStatus();
     }
-
-
 
     public StringBuilder getBoard() {
         return jogo.getBoard();
@@ -187,6 +192,7 @@ public class MaquinaEstados {
     private void guardaState(){
         tempJogo.add( (Jogo) jogo.clone());
         jogo.resetMinijogo();
+        jogo.setTurnoCreditos();
     }
 
     public void passaTurno() {
@@ -223,7 +229,7 @@ public class MaquinaEstados {
             atual=atual.continuaJogada();
         }
         else{
-            atual=atual.passaTurno();
+            atual=atual.aguardaPassarTurno();
         }
         jogo.setMinigame();
         jogo.resetBonus(pontos);
@@ -286,5 +292,31 @@ public class MaquinaEstados {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("Historico.dat"))) {
             historico = (ArrayList<ArrayList<Jogo>>) in.readObject();
         }
+    }
+
+    public Erro usaCreditos(int numCr) {
+        Jogo temporario;
+        if(jogo.getCreditos() < numCr)
+            return Erro.SemCreditos;
+        if(jogo.getTurnoCreditos() < numCr){
+            return Erro.VoltarAntesCreditos;
+        }
+        try{
+            temporario = (Jogo) tempJogo.get(tempJogo.size()-1-numCr).clone();
+        }catch (IndexOutOfBoundsException ignored){
+            return Erro.SemJogadas;
+        }
+        temporario.setCreditos( jogo.getCreditos ()-numCr, jogo.getVezJogador());
+        temporario.resetBonus(jogo.getVezJogador());
+        temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
+        temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
+        jogo = temporario;
+        jogo.resetTurnoCreditos();
+        atual = new Jogada(jogo);
+        return Erro.JogadaValida;
+    }
+
+    public int getCreditos() {
+        return jogo.getCreditos();
     }
 }

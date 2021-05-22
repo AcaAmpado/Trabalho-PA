@@ -8,12 +8,10 @@ public class Jogada extends EstadoAdapter{
         super(jogo);
     }
 
-
     @Override
     public IEstado acabaJogo() {
         return new GameOver(jogo);
     }
-
 
     @Override
     public IEstado aguardaPassarTurno() {

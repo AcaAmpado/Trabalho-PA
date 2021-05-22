@@ -12,8 +12,12 @@ import java.io.IOException;
 
 public class QuatroUI {
     MaquinaEstados maquinaEstados;
-    public QuatroUI(MaquinaEstados maquinaEstados){this.maquinaEstados = maquinaEstados;}
     private static boolean sair;
+
+    public QuatroUI(MaquinaEstados maquinaEstados){
+        this.maquinaEstados = maquinaEstados;
+    }
+
     public void start(){
         sair=false;
         while(!sair){
@@ -30,10 +34,7 @@ public class QuatroUI {
 
             }
         }
-
     }
-
-
 
     private void uiInicio(){
         System.out.println("Bem Vindo ao Jogo do Quatro em Linha!");
@@ -52,6 +53,7 @@ public class QuatroUI {
         else
             maquinaEstados.start();
     }
+
     private void uiGameMode(){
         switch (auxFunc.escolherOpcao("Novo Jogo","Carregar Jogo","Ver Jogos Anteriores","Sair")){
             case 1: // Novo Jogo
@@ -85,10 +87,10 @@ public class QuatroUI {
                 break;
         }
     }
+
     private void uiNamePlayers(){
         String player1 = auxFunc.pedeString("Introduza o nome do jogador 1:");
         String player2;
-
         do{
             player2 = auxFunc.pedeString("Introduza o nome do jogador 2:");
             if(player2.compareToIgnoreCase(player1)==0){
@@ -99,10 +101,9 @@ public class QuatroUI {
             System.out.println("Erro a comecar o jogo!");
             maquinaEstados.terminaJogo();
         }
-
     }
-    private void uiJogada(){
 
+    private void uiJogada(){
         System.out.println(maquinaEstados.getBoard());
         System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
@@ -140,6 +141,7 @@ public class QuatroUI {
         }
         else{
             System.out.println("Peças Especiais: "+maquinaEstados.getPecaEspecial());
+            System.out.println("Creditos:" +maquinaEstados.getCreditos());
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Jogar Peca Especial", "Sair")) {
                 case 1:
                     switch(maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1)){
@@ -184,10 +186,13 @@ public class QuatroUI {
         }
     }
 
-
-
     private void utilizaCreditos() {
-        //TODO pedir numero de creditos e carregar do historico | dar reset dos contadores e tal | mandar para o aguardaJogada
+        switch (maquinaEstados.usaCreditos(auxFunc.lerInteiro("Introduza o numero de creditos que pretende usar:",1,5))){
+            case JogadaValida -> System.out.println("Creditos usados com sucesso!");
+            case SemCreditos -> System.out.println("Não tem creditos suficientes!");
+            case SemJogadas -> System.out.println("Não existem jogadas para o numero de creditos!");
+            case VoltarAntesCreditos -> System.out.println("Não é possivel para a ronda antes de terem sido usados os ultimos creditos!");
+        }
     }
 
     private boolean sairGuarda(){
@@ -208,6 +213,7 @@ public class QuatroUI {
                 return true;
         }
     }
+
     private boolean guardaJogo(){
         return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:")+".dat");
     }
@@ -218,8 +224,8 @@ public class QuatroUI {
          }
          else System.out.println("Jogo carregado com sucesso!");
     }
+
     private void uiHistorico(){
-        //TODO quando tiver record dos jogos
         String res = maquinaEstados.getHist();
         if(res.equals(Erro.SemJogosHist.toString())){
             System.out.println("Não existem jogos guardados");
@@ -227,17 +233,18 @@ public class QuatroUI {
         }
         System.out.println(res);
         maquinaEstados.replayHistorico(auxFunc.lerInteiro("Insira o numero do jogo que pretende visualizar:", 1,maquinaEstados.getHistoricoNum())-1);
-
     }
 
     private void uiPassarTurno(){
-        if( maquinaEstados.isHistorico() ) {
-            if(maquinaEstados.isMinigame() == Erro.Perdeu){
+        if(maquinaEstados.isHistorico()){
+            System.out.println("Jogador "+ maquinaEstados.getNomeJogadorVez());
+            Erro erro = maquinaEstados.isMinigame();
+            if(erro == Erro.Perdeu){
                 System.out.println("O jogador jogou um minijogo e perdeu!");
-            }else if (maquinaEstados.isMinigame() == Erro.Ganhou){
+            }else if (erro == Erro.Ganhou){
                 System.out.println("O jogador jogou um minijogo e ganhou uma peça especial!");
             }
-            else if(maquinaEstados.isMinigame() == Erro.NaoJogou){
+            else if(erro == Erro.NaoJogou){
                 System.out.println("O jogador optou por nao jogar o minijogo");
             }
             System.out.println(maquinaEstados.getBoard());
@@ -248,47 +255,24 @@ public class QuatroUI {
             return;
         }
         System.out.println(maquinaEstados.getBoard());
-        if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
-            switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Sair")) {
-                case 1:
-                    maquinaEstados.passaTurno();
-                    break;
-                case 2:
-                    guardaJogo();
-                    break;
-                case 0:
-                    if(sairGuarda())
-                        maquinaEstados.terminaJogo();
-                    break;
-                default:
-                    System.out.println("Erro critico!");
+        switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Sair")) {
+            case 1:
+                maquinaEstados.passaTurno();
+                break;
+            case 2:
+                guardaJogo();
+                break;
+            case 0:
+                if(sairGuarda())
                     maquinaEstados.terminaJogo();
-                    break;
-            }
-
-        }
-        else{
-            switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Utilizar Créditos", "Sair")) {
-                case 1:
-                    maquinaEstados.passaTurno();
-                    break;
-                case 2:
-                    guardaJogo();
-                    break;
-                case 3:
-                    utilizaCreditos();
-                    break;
-                case 0:
-                    if(sairGuarda())
-                        maquinaEstados.terminaJogo();
-                    break;
-                default:
-                    System.out.println("Erro critico!");
-                    maquinaEstados.terminaJogo();
-                    break;
-            }
+                break;
+            default:
+                System.out.println("Erro critico!");
+                maquinaEstados.terminaJogo();
+                break;
         }
     }
+
     private void uiDecisao(){
         System.out.println("Jogador "+maquinaEstados.getNomeJogadorVez());
         System.out.println("Pretende jogar um minijogo para ganhar uma peça especial?");

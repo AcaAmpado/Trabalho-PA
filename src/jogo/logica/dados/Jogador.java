@@ -25,7 +25,7 @@ public class Jogador implements Cloneable, Serializable {
         this.minigame = (int) (Math.random() * numMG);
     }
 
-    public TipoJogador GetTipo(){
+    public TipoJogador getTipo(){
         return tipo;
     }
 
@@ -40,25 +40,21 @@ public class Jogador implements Cloneable, Serializable {
             minigame=0;
     }
 
-    public void SetCreditos(int creditos){
+    public void setCreditos(int creditos){
         this.creditos=creditos;
     }
 
-    public void SetBonus(int rondas){
+    public void setBonus(int rondas){
         this.rondasBonus=rondas;
     }
 
-    public void AdicionaPecaEspecial(){
+    public void adicionaPecaEspecial(){
         this.pecaEspecial++;
     }
 
 
     public String getNome() {
         return nome;
-    }
-
-    public TipoJogador getTipo() {
-        return tipo;
     }
 
     public void removePecaEspecial() {
@@ -93,5 +89,13 @@ public class Jogador implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "Jogador: "+nome+" - S "+ symbol +" - Tp "+tipo.toString()+" - Cr "+ creditos +" - RB "+ rondasBonus + " - PE "+ pecaEspecial +" - MG "+ minigame;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+
+    public void setPecaEspecial(int num) {
+        this.pecaEspecial=num;
     }
 }
