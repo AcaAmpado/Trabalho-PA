@@ -350,6 +350,7 @@ public class MaquinaEstados {
     private void guardaState(){
         tempJogo.add((Jogo) jogo.clone());
         jogo.setTurnoCreditos();
+        jogo.resetMinijogo();
     }
 
     //__________________CREDITOS______________________

@@ -147,6 +147,10 @@ public class Jogo implements Serializable, Cloneable {
         turnoCreditos = -1;
     }
 
+    public void resetMinijogo() {
+        minijogo=Erro.Critico;
+    }
+
     public void resetBonus(int pontos){
         players.get(vezJogador).setBonus(RONDASPBONUS);
         if(pontos == -2){
