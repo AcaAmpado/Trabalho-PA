@@ -55,7 +55,7 @@ public class QuatroUI {
     }
 
     private void uiGameMode(){
-        switch (auxFunc.escolherOpcao("Novo Jogo","Carregar Jogo","Ver Jogos Anteriores","Sair")){
+        switch (auxFunc.escolherOpcao("Novo Jogo","Carregar Jogo","Ver Jogos Anteriores","LogsME" ,"Sair")){
             case 1: // Novo Jogo
                 switch (auxFunc.escolherOpcao("Jogador vs Jogador", "Jogador vs AI", "AI vs AI", "Sair")) {
                     case 1 -> //PvP
@@ -77,6 +77,9 @@ public class QuatroUI {
                 break;
             case 3:// Ver jogos anteriores
                 maquinaEstados.historicoJogos();
+                break;
+            case 4:
+                System.out.println(maquinaEstados.getLogME().toString());
                 break;
             case 0: //Sair
                 maquinaEstados.terminaJogo();
@@ -107,7 +110,7 @@ public class QuatroUI {
         System.out.println(maquinaEstados.getBoard());
         System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
-            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Sair")) {
+            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "LogsME" , "Sair")) {
                 case 1:
                     switch(maquinaEstados.jogaAI()){
                         case TabuleiroCheio -> {
@@ -128,6 +131,9 @@ public class QuatroUI {
                 case 2:
                     guardaJogo();
                     break;
+                case 3:
+                    System.out.println(maquinaEstados.getLogME().toString());
+                    break;
                 case 0:
                     if(sairGuarda())
                         maquinaEstados.terminaJogo();
@@ -142,7 +148,7 @@ public class QuatroUI {
         else{
             System.out.println("Peças Especiais: "+maquinaEstados.getPecaEspecial());
             System.out.println("Creditos:" +maquinaEstados.getCreditos());
-            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Jogar Peca Especial", "Sair")) {
+            switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "Utilizar Créditos", "Jogar Peca Especial", "LogsME" ,"Sair")) {
                 case 1:
                     switch(maquinaEstados.fazJogada(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1)){
                         case Ganhou -> {
@@ -173,6 +179,9 @@ public class QuatroUI {
                         break;
                     }
                     maquinaEstados.jogaPecaEspecial(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1);
+                    break;
+                case 5:
+                    System.out.println(maquinaEstados.getLogME().toString());
                     break;
                 case 0:
                     if(sairGuarda())
@@ -255,12 +264,18 @@ public class QuatroUI {
             return;
         }
         System.out.println(maquinaEstados.getBoard());
-        switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo", "Sair")) {
+        switch (auxFunc.escolherOpcao("Passar Turno", "Guardar Jogo","Utilizar Créditos", "LogsME" ,"Sair")) {
             case 1:
                 maquinaEstados.passaTurno();
                 break;
             case 2:
                 guardaJogo();
+                break;
+            case 3:
+                utilizaCreditos();
+                break;
+            case 4:
+                System.out.println(maquinaEstados.getLogME().toString());
                 break;
             case 0:
                 if(sairGuarda())
@@ -319,6 +334,4 @@ public class QuatroUI {
             }
         }
     }
-
-
 }

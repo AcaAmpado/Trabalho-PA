@@ -15,31 +15,43 @@ public class MaquinaEstados {
     ArrayList<ArrayList<Jogo>> historico;
     ArrayList<Jogo> tempJogo;
     ArrayList<String> logME;
-    
+
     public MaquinaEstados(){
 
         jogo = new Jogo();
         historico = new ArrayList<>();
         logME = new ArrayList<>();
         atual = new Inicio(jogo);
-        logME.add(Situacao.Inicio.toString());
+        addLog(Situacao.Inicio.toString());
         try {
             carregaHistoricoF();
         }catch (IOException | ClassNotFoundException ignored){}
     }
 
-    public void start() {
+    public void addLog(String log){
+        logME.add(log);
+    }
 
+    public ArrayList<String> getLogME(){
+        return logME;
+    }
+
+    public void start() {
+        addLog("start()");
         jogo.setupJogo();
+        addLog(Situacao.GameMode.toString());
         atual = atual.start();
     }
 
     public void selGameMode(int tipo){
+        addLog("selGameMode()");
         jogo.setTipo(tipo);
+        addLog(Situacao.NamePlayers.toString());
         atual = atual.selGameMode();
     }
 
     public boolean guardaJogo(String nomeSave) {
+        addLog("guardaJogo()");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeSave))) {
             out.writeObject(jogo);
             out.writeObject(atual.getStatus());
@@ -52,13 +64,16 @@ public class MaquinaEstados {
 
     @SuppressWarnings("unchecked")
     public boolean carregaJogo(String name) {
+        addLog("carregaJogo()");
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(name))) {
             jogo = (Jogo) in.readObject();
+            addLog(Situacao.Jogada.toString());
             atual = switchState((Situacao) in.readObject());
             tempJogo = (ArrayList<Jogo>) in.readObject();
         } catch (IOException | ClassNotFoundException ignored) {
             return false;
         }
+
         return true;
     }
 
@@ -96,13 +111,16 @@ public class MaquinaEstados {
     }
 
     public void historicoJogos() {
+        addLog(Situacao.Historico.toString());
         atual = atual.historicoJogos();
     }
 
     public boolean comecaJogo(String player1, String player2) {
+        addLog("comecaJogo()");
         jogo.setPlayer(player1, 'A');
         jogo.setPlayer(player2, 'B');
         if(jogo.comecaJogo()) {
+            addLog(Situacao.Jogada.toString());
             atual = atual.comecaJogo();
             tempJogo = new ArrayList<>();
             guardaState();
@@ -128,10 +146,12 @@ public class MaquinaEstados {
     }
 
     public Erro fazJogada(int coluna) {
+        addLog("fazJogada()");
         switch(jogo.fazJogada(coluna)){
             case Ganhou -> {
                 guardaState();
                 jogoParaHist(tempJogo);
+                addLog(Situacao.GameOver.toString());
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
@@ -140,41 +160,50 @@ public class MaquinaEstados {
             }
             case JogadaValida -> {
                 guardaState();
+                addLog(Situacao.PassarTurno.toString());
                 atual=atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
             case TabuleiroCheio -> {
                 guardaState();
                 jogoParaHist(tempJogo);
+                addLog(Situacao.GameOver.toString());
                 atual=atual.acabaJogo();
                 return Erro.TabuleiroCheio;
             }
         }
         return Erro.Critico;
     }
+
     public void jogaPecaEspecial(int coluna) {
+        addLog("jogaPecaEspecial()");
         if (jogo.jogaPecaEspecial(coluna) == Erro.JogadaValida) {
             guardaState();
+            addLog(Situacao.PassarTurno.toString());
             atual = atual.aguardaPassarTurno();
         }
     }
 
     public Erro jogaAI() {
+        addLog("jogaAI()");
         switch (jogo.jogaAI()) {
             case Ganhou -> {
                 guardaState();
                 jogoParaHist(tempJogo);
+                addLog(Situacao.GameOver.toString());
                 atual = atual.acabaJogo();
                 return Erro.Ganhou;
             }
             case JogadaValida -> {
                 guardaState();
+                addLog(Situacao.PassarTurno.toString());
                 atual = atual.aguardaPassarTurno();
                 return Erro.JogadaValida;
             }
             case TabuleiroCheio -> {
                 guardaState();
                 jogoParaHist(tempJogo);
+                addLog(Situacao.GameOver.toString());
                 atual = atual.acabaJogo();
                 return Erro.TabuleiroCheio;
             }
@@ -196,23 +225,32 @@ public class MaquinaEstados {
     }
 
     public void passaTurno() {
+        addLog("passaTurno()");
         jogo.setVezJogador();
         jogo.atualizaBonus();
-        if(jogo.checkMiniGame())
+        if(jogo.checkMiniGame()){
+            addLog(Situacao.DecisaoMiniGame.toString());
             atual=atual.decideMiniGame();
-        else
+        }
+        else{
+            addLog(Situacao.Jogada.toString());
             atual=atual.passaTurno();
+        }
+
     }
 
     public void terminaJogo() {
+        addLog(Situacao.GameOver.toString());
         atual=atual.terminaJogo();
     }
 
     public void startMiniGame() {
+        addLog(Situacao.MiniGame.toString());
         atual=atual.startMiniGame();
     }
 
     public void semMiniGame() {
+        addLog("semMiniGame()");
         atual=atual.passaTurno();
         jogo.resetBonus(-2);
     }
@@ -222,18 +260,20 @@ public class MaquinaEstados {
     }
 
     public int jogaMinijogo() {
+        addLog("jogaMiniJogo");
         int pontos;
         pontos=jogo.jogaMinijogo();
         if(pontos>=5){
             jogo.addPecaEspecial();
+            addLog(Situacao.Jogada.toString());
             atual=atual.continuaJogada();
         }
         else{
+            addLog(Situacao.PassarTurno.toString());
             atual=atual.aguardaPassarTurno();
         }
         jogo.setMinigame();
         jogo.resetBonus(pontos);
-
         return pontos ;
     }
 
@@ -241,9 +281,9 @@ public class MaquinaEstados {
         return jogo.getPecaEspecial();
     }
 
-
     public String getHist() {
         if(historico.size()==0) {
+            addLog(Situacao.GameMode.toString());
             atual=atual.start();
             return Erro.SemJogosHist.toString();
         }
@@ -263,8 +303,10 @@ public class MaquinaEstados {
     }
 
     public void replayHistorico(int game) {
+
         jogo.innitReplay(historico.get(game));
         jogo.replayHistorico();
+        addLog(Situacao.PassarTurno.toString());
         atual = atual.aguardaPassarTurno();
     }
 
@@ -273,8 +315,11 @@ public class MaquinaEstados {
     }
 
     public void passaTurnoHistorico() {
-        if(jogo.replayHistorico() == Erro.FimJogo)
+        if(jogo.replayHistorico() == Erro.FimJogo){
+            addLog(Situacao.GameOver.toString());
             atual=atual.acabaJogo();
+        }
+
     }
 
     public Erro isMinigame() {
@@ -282,6 +327,7 @@ public class MaquinaEstados {
     }
 
     public void guardaHistoricoF() throws IOException {
+        addLog("guardaHistoricoF()");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("Historico.dat"))) {
             out.writeObject(historico);
         }
@@ -295,6 +341,7 @@ public class MaquinaEstados {
     }
 
     public Erro usaCreditos(int numCr) {
+        addLog("usaCreditos()");
         Jogo temporario;
         if(jogo.getCreditos() < numCr)
             return Erro.SemCreditos;
@@ -311,7 +358,9 @@ public class MaquinaEstados {
         temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
         temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
         jogo = temporario;
+        jogo.setVezJogador();
         jogo.resetTurnoCreditos();
+        addLog(Situacao.Jogada.toString());
         atual = new Jogada(jogo);
         return Erro.JogadaValida;
     }

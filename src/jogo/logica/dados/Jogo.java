@@ -30,25 +30,6 @@ public class Jogo implements Serializable, Cloneable {
     public Jogo (){
        setupJogo();
     }
-    /*
-    // ------------ Logs ------------
-
-    ArrayList<String> log = new ArrayList<>();
-
-    public void addLog(String str){
-        log.add(str);
-    }
-
-    public ArrayList<String> getLog(){
-        return log;
-    }
-
-    public void clearLog(){
-        log.clear();
-    }
-
-    // ------------------------
-    */
 
     public void setupJogo(){
         players = new ArrayList<>();
@@ -69,7 +50,7 @@ public class Jogo implements Serializable, Cloneable {
     }
 
     public void resetTurnoCreditos(){
-        turnoCreditos=0;
+        turnoCreditos = -1;
     }
 
     public void setTipo(int tipo){
@@ -102,10 +83,6 @@ public class Jogo implements Serializable, Cloneable {
         players.get(vezJogador).decrementaBonus();
         return true;
     }
-
-    /*public TipoJogador getTipoJogador(int nJogador){
-        return players.get(nJogador).getTipo();
-    }*/
 
     public TipoJogador getTipoJogador(){
         return players.get(vezJogador).getTipo();
@@ -148,7 +125,7 @@ public class Jogo implements Serializable, Cloneable {
                     && players.get(tabuleiro.get(col+1).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol()
                     && players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+3).get(linha).getJogador()).getSymbol()){
                         return true;
-                    }//players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol()
+                    }
                 }catch (IndexOutOfBoundsException ignored){}
             }
         }
@@ -201,7 +178,7 @@ public class Jogo implements Serializable, Cloneable {
         }
         if(!isPlayable())
             return Erro.TabuleiroCheio;
-        minijogo=Erro.JogadaValida;
+        minijogo = Erro.JogadaValida;
         return Erro.JogadaValida;
     }
 
@@ -330,10 +307,6 @@ public class Jogo implements Serializable, Cloneable {
         return players.get(vezJogador).getCreditos();
     }
 
-   /* public void setCreditos(int i) {
-        players.get(vezJogador).setCreditos(i);
-    }*/
-
     public void setCreditos(int i,int vez) {
         players.get(vez).setCreditos(i);
     }
@@ -346,9 +319,9 @@ public class Jogo implements Serializable, Cloneable {
     public Object clone(){
         Jogo clone = null;
         try {
-            clone=(Jogo)super.clone();
+            clone = (Jogo) super.clone();
             clone.tipo = this.tipo ;
-            clone.vezJogador=this.vezJogador;
+            clone.vezJogador = this.vezJogador;
             ArrayList<Jogador> clonePlayers = new ArrayList<>(players.size());
 
             for(Jogador jog:players) // Clone de Jogadores
@@ -359,7 +332,7 @@ public class Jogo implements Serializable, Cloneable {
             ArrayList<ArrayList<Peca>> cloneTabuleiro = new ArrayList<>(); //Clone de Tabuleiro
             for (int i = 0; i < LARGURA ; i++) {
                 cloneTabuleiro.add(new ArrayList<>());
-                for(int j=0;j<tabuleiro.get(i).size();j++ ){
+                for(int j = 0 ; j < tabuleiro.get(i).size() ; j++ ){
                     cloneTabuleiro.get(i).add(new Peca(tabuleiro.get(i).get(j).getJogador()));
                 }
             }
