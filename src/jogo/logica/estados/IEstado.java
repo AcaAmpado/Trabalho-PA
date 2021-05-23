@@ -14,8 +14,6 @@ public interface IEstado {
 
     IEstado historicoJogos();
 
-    IEstado acabaJogo();
-
     IEstado aguardaPassarTurno();
 
     IEstado passaTurno();

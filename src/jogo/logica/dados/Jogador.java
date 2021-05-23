@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 public class Jogador implements Cloneable, Serializable {
+
     @Serial
     private static final long serialVersionUID = 4L;
 
@@ -24,7 +25,7 @@ public class Jogador implements Cloneable, Serializable {
         this.pecaEspecial = 0;
         this.minigame = (int) (Math.random() * numMG);
     }
-
+    //________________GET________________
     public TipoJogador getTipo(){
         return tipo;
     }
@@ -32,6 +33,28 @@ public class Jogador implements Cloneable, Serializable {
     public int getMinigame(){
         return minigame;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getPecaEspecial() {
+        return this.pecaEspecial;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public int getBonus() {
+        return this.rondasBonus;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+
+    //________________SET_________________
 
     public void setMinigame(int numMG) {
         if(minigame < numMG-1)
@@ -52,30 +75,19 @@ public class Jogador implements Cloneable, Serializable {
         this.pecaEspecial++;
     }
 
-
-    public String getNome() {
-        return nome;
-    }
-
     public void removePecaEspecial() {
         this.pecaEspecial--;
-    }
-
-    public int getPecaEspecial() {
-        return this.pecaEspecial;
-    }
-
-    public char getSymbol() {
-        return symbol;
-    }
-
-    public int getBonus() {
-        return this.rondasBonus;
     }
 
     public void decrementaBonus() {
         this.rondasBonus--;
     }
+
+    public void setPecaEspecial(int num) {
+        this.pecaEspecial=num;
+    }
+
+    //_____________________OVERRIDES________________
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -89,13 +101,5 @@ public class Jogador implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "Jogador: "+nome+" - S "+ symbol +" - Tp "+tipo.toString()+" - Cr "+ creditos +" - RB "+ rondasBonus + " - PE "+ pecaEspecial +" - MG "+ minigame;
-    }
-
-    public int getCreditos() {
-        return creditos;
-    }
-
-    public void setPecaEspecial(int num) {
-        this.pecaEspecial=num;
     }
 }

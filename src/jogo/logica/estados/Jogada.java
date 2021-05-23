@@ -9,11 +9,6 @@ public class Jogada extends EstadoAdapter{
     }
 
     @Override
-    public IEstado acabaJogo() {
-        return new GameOver(jogo);
-    }
-
-    @Override
     public IEstado aguardaPassarTurno() {
         return new PassarTurno(jogo);
     }

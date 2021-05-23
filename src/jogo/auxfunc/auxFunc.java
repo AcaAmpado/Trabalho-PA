@@ -3,8 +3,12 @@ package jogo.auxfunc;
 import java.util.Scanner;
 
 public class auxFunc {
+
     public static Scanner sc;
-    static {sc=new Scanner(System.in);}
+
+    static {
+        sc=new Scanner(System.in);
+    }
 
     public static int lerInteiro(String pergunta) {
         System.out.print(pergunta);

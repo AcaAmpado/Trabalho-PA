@@ -9,7 +9,6 @@ public class GameMode extends EstadoAdapter{
         super(jogo);
     }
 
-
     @Override
     public IEstado selGameMode() {
         return new NamePlayers(jogo);

@@ -17,7 +17,6 @@ public class MaquinaEstados {
     ArrayList<String> logME;
 
     public MaquinaEstados(){
-
         jogo = new Jogo();
         historico = new ArrayList<>();
         logME = new ArrayList<>();
@@ -28,17 +27,81 @@ public class MaquinaEstados {
         }catch (IOException | ClassNotFoundException ignored){}
     }
 
-    public void addLog(String log){
-        logME.add(log);
+    //__________________GET___________________________
+
+    public String getNomeJogadorVez(){
+        return jogo.getNomeJogadorVez();
     }
+
+    public TipoJogador getTipoJogador(){
+        return jogo.getTipoJogador();
+    }
+
+    public Situacao getStatus(){
+        return atual.getStatus();
+    }
+
+    public StringBuilder getBoard() {
+        return jogo.getBoard();
+    }
+
+    public int getCreditos() {
+        return jogo.getCreditos();
+    }
+
+    public int getMiniJogo() {
+        return jogo.getMiniJogo();
+    }
+
+    public int getPecaEspecial() {
+        return jogo.getPecaEspecial();
+    }
+
+    public String getHist() {
+        if(historico.size()==0) {
+            addLog(Situacao.GameMode.toString());
+            atual=atual.start();
+            return Erro.SemJogosHist.toString();
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < getHistoricoNum(); i++){
+            sb.append("\nJogo ").append(i+1).append(":").append(getJogoHistorico(i));
+        }
+        return sb.toString();
+    }
+
+    public int getHistoricoNum() {
+        return historico.size();
+    }
+
+    public String getJogoHistorico(int i) {
+        return historico.get(i).get(0).toString();
+    }
+
+    //_______________________LOG_____________________
 
     public ArrayList<String> getLogME(){
         return logME;
     }
 
+    public void addLog(String log){
+        logME.add(log);
+    }
+
+    //_____________________CHECKS__________________
+
+    public boolean isHistorico() {
+        return jogo.isHistorico();
+    }
+
+    public Erro isMinigame() {
+        return jogo.isMinigame();
+    }
+
+    //______________________________________
+
     public void start() {
         addLog("start()");
-        jogo.setupJogo();
         addLog(Situacao.GameMode.toString());
         atual = atual.start();
     }
@@ -49,6 +112,22 @@ public class MaquinaEstados {
         addLog(Situacao.NamePlayers.toString());
         atual = atual.selGameMode();
     }
+
+    public boolean comecaJogo(String player1, String player2) {
+        addLog("comecaJogo()");
+        jogo.setPlayer(player1, 'A');
+        jogo.setPlayer(player2, 'B');
+        if(jogo.comecaJogo()) {
+            addLog(Situacao.Jogada.toString());
+            atual = atual.comecaJogo();
+            tempJogo = new ArrayList<>();
+            guardaState();
+            return true;
+        }
+        return false;
+    }
+
+    //______________________GUARDA_CARREGA________________________
 
     public boolean guardaJogo(String nomeSave) {
         addLog("guardaJogo()");
@@ -73,7 +152,6 @@ public class MaquinaEstados {
         } catch (IOException | ClassNotFoundException ignored) {
             return false;
         }
-
         return true;
     }
 
@@ -110,40 +188,7 @@ public class MaquinaEstados {
         return null;
     }
 
-    public void historicoJogos() {
-        addLog(Situacao.Historico.toString());
-        atual = atual.historicoJogos();
-    }
-
-    public boolean comecaJogo(String player1, String player2) {
-        addLog("comecaJogo()");
-        jogo.setPlayer(player1, 'A');
-        jogo.setPlayer(player2, 'B');
-        if(jogo.comecaJogo()) {
-            addLog(Situacao.Jogada.toString());
-            atual = atual.comecaJogo();
-            tempJogo = new ArrayList<>();
-            guardaState();
-            return true;
-        }
-        return false;
-    }
-
-    public String getNomeJogadorVez(){
-        return jogo.getNomeJogadorVez();
-    }
-
-    public TipoJogador getTipoJogador(){
-        return jogo.getTipoJogador();
-    }
-
-    public Situacao getStatus(){
-        return atual.getStatus();
-    }
-
-    public StringBuilder getBoard() {
-        return jogo.getBoard();
-    }
+    //____________________JOGADAS________________
 
     public Erro fazJogada(int coluna) {
         addLog("fazJogada()");
@@ -152,7 +197,7 @@ public class MaquinaEstados {
                 guardaState();
                 jogoParaHist(tempJogo);
                 addLog(Situacao.GameOver.toString());
-                atual = atual.acabaJogo();
+                atual = atual.terminaJogo();
                 return Erro.Ganhou;
             }
             case ColunaCheia -> {
@@ -168,7 +213,7 @@ public class MaquinaEstados {
                 guardaState();
                 jogoParaHist(tempJogo);
                 addLog(Situacao.GameOver.toString());
-                atual=atual.acabaJogo();
+                atual=atual.terminaJogo();
                 return Erro.TabuleiroCheio;
             }
         }
@@ -191,7 +236,7 @@ public class MaquinaEstados {
                 guardaState();
                 jogoParaHist(tempJogo);
                 addLog(Situacao.GameOver.toString());
-                atual = atual.acabaJogo();
+                atual = atual.terminaJogo();
                 return Erro.Ganhou;
             }
             case JogadaValida -> {
@@ -204,25 +249,14 @@ public class MaquinaEstados {
                 guardaState();
                 jogoParaHist(tempJogo);
                 addLog(Situacao.GameOver.toString());
-                atual = atual.acabaJogo();
+                atual = atual.terminaJogo();
                 return Erro.TabuleiroCheio;
             }
         }
         return Erro.Critico;
     }
 
-    private void jogoParaHist(ArrayList<Jogo> tempJogo) {
-        historico.add(tempJogo);
-        if(historico.size()>5){
-            historico.remove(0);
-        }
-    }
-
-    private void guardaState(){
-        tempJogo.add( (Jogo) jogo.clone());
-        jogo.resetMinijogo();
-        jogo.setTurnoCreditos();
-    }
+    //_________________PASSARTURNO_________________
 
     public void passaTurno() {
         addLog("passaTurno()");
@@ -236,13 +270,9 @@ public class MaquinaEstados {
             addLog(Situacao.Jogada.toString());
             atual=atual.passaTurno();
         }
-
     }
 
-    public void terminaJogo() {
-        addLog(Situacao.GameOver.toString());
-        atual=atual.terminaJogo();
-    }
+    //____________________MINIJOGO______________________
 
     public void startMiniGame() {
         addLog(Situacao.MiniGame.toString());
@@ -253,10 +283,6 @@ public class MaquinaEstados {
         addLog("semMiniGame()");
         atual=atual.passaTurno();
         jogo.resetBonus(-2);
-    }
-
-    public int getMiniJogo() {
-        return jogo.getMiniJogo();
     }
 
     public int jogaMinijogo() {
@@ -277,53 +303,32 @@ public class MaquinaEstados {
         return pontos ;
     }
 
-    public int getPecaEspecial() {
-        return jogo.getPecaEspecial();
-    }
+    //___________________HISTORICO_____________________
 
-    public String getHist() {
-        if(historico.size()==0) {
-            addLog(Situacao.GameMode.toString());
-            atual=atual.start();
-            return Erro.SemJogosHist.toString();
+    private void jogoParaHist(ArrayList<Jogo> tempJogo) {
+        historico.add(tempJogo);
+        if(historico.size()>5){
+            historico.remove(0);
         }
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < getHistoricoNum(); i++){
-            sb.append("\nJogo ").append(i+1).append(":").append(getJogoHistorico(i));
-        }
-        return sb.toString();
     }
 
-    public int getHistoricoNum() {
-        return historico.size();
-    }
-
-    public String getJogoHistorico(int i) {
-        return historico.get(i).get(0).toString();
+    public void historicoJogos() {
+        addLog(Situacao.Historico.toString());
+        atual = atual.historicoJogos();
     }
 
     public void replayHistorico(int game) {
-
         jogo.innitReplay(historico.get(game));
         jogo.replayHistorico();
         addLog(Situacao.PassarTurno.toString());
         atual = atual.aguardaPassarTurno();
     }
 
-    public boolean isHistorico() {
-        return jogo.isHistorico();
-    }
-
     public void passaTurnoHistorico() {
         if(jogo.replayHistorico() == Erro.FimJogo){
             addLog(Situacao.GameOver.toString());
-            atual=atual.acabaJogo();
+            atual=atual.terminaJogo();
         }
-
-    }
-
-    public Erro isMinigame() {
-        return jogo.isMinigame();
     }
 
     public void guardaHistoricoF() throws IOException {
@@ -339,6 +344,14 @@ public class MaquinaEstados {
             historico = (ArrayList<ArrayList<Jogo>>) in.readObject();
         }
     }
+
+    private void guardaState(){
+        tempJogo.add((Jogo) jogo.clone());
+        jogo.resetMinijogo();
+        jogo.setTurnoCreditos();
+    }
+
+    //__________________CREDITOS______________________
 
     public Erro usaCreditos(int numCr) {
         addLog("usaCreditos()");
@@ -365,7 +378,10 @@ public class MaquinaEstados {
         return Erro.JogadaValida;
     }
 
-    public int getCreditos() {
-        return jogo.getCreditos();
+    //___________________TERMINA______________________
+
+    public void terminaJogo() {
+        addLog(Situacao.GameOver.toString());
+        atual=atual.terminaJogo();
     }
 }

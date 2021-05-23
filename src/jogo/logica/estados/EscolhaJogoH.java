@@ -9,7 +9,6 @@ public class EscolhaJogoH extends EstadoAdapter{
         super(jogo);
     }
 
-
     @Override
     public IEstado aguardaPassarTurno() {
         return new PassarTurno(jogo);

@@ -9,7 +9,6 @@ public class DecisaoMiniGame extends EstadoAdapter{
         super(jogo);
     }
 
-
     @Override
     public IEstado startMiniGame() {
         return new MiniGame(jogo);

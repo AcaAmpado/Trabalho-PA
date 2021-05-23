@@ -6,15 +6,20 @@ import java.io.Serializable;
 public class Peca implements  Cloneable, Serializable {
     @Serial
     private static final long serialVersionUID = 4L;
+
     private final int jogador;
 
     public Peca(int jogador){
         this.jogador=jogador;
     }
 
+    //_______________GET_______________
+
     public int getJogador(){
         return jogador;
     }
+
+    //_______________OVERRIDES__________________
 
     @Override
     public Object clone(){

@@ -8,13 +8,6 @@ public class Inicio extends EstadoAdapter{
         super(jogo);
     }
 
-
-    @Override
-    public IEstado start() {
-        return new GameMode(jogo);
-    }
-
-
     @Override
     public Situacao getStatus() {
         return Situacao.Inicio;

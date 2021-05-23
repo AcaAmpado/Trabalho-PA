@@ -9,15 +9,9 @@ public class PassarTurno extends EstadoAdapter{
         super(jogo);
     }
 
-
     @Override
     public IEstado decideMiniGame() {
         return new DecisaoMiniGame(jogo);
-    }
-
-    @Override
-    public IEstado acabaJogo() {
-        return new GameOver(jogo);
     }
 
     @Override

@@ -2,13 +2,9 @@ package jogo.logica.dados.minigames;
 
 import jogo.auxfunc.auxFunc;
 
-import java.text.DecimalFormat;
-
-
 public class RandomContas extends MiniGame {
-    private final int NUMCONTAS=5;
-    private final int MIN=1, MAX=10;
 
+    private final int MIN = 1, MAX = 10;
 
     public RandomContas(){
         pontos=0;
@@ -20,7 +16,6 @@ public class RandomContas extends MiniGame {
 
     @Override
     public int joga() {
-
         long start = System.currentTimeMillis();
         long end = start + 30*1000;
         while (System.currentTimeMillis() < end) {
@@ -44,7 +39,7 @@ public class RandomContas extends MiniGame {
                         pontos++;
                 }
             }
-            if(pontos==NUMCONTAS)
+            if(pontos==NECESSARIO)
                 break;
         }
         if(System.currentTimeMillis() < end){

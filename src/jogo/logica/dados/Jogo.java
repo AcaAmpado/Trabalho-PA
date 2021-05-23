@@ -41,16 +41,63 @@ public class Jogo implements Serializable, Cloneable {
         turnoCreditos=0;
     }
 
+    // ____________GET____________
+
+    public TipoJogador getTipoJogador(){
+        return players.get(vezJogador).getTipo();
+    }
+
+    public String getNomeJogadorVez(){
+        return players.get(vezJogador).getNome();
+    }
+
+    public StringBuilder getBoard() {
+        StringBuilder board= new StringBuilder();
+        board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
+        board.append("-----------------------------\n");
+        for(int i = ALTURA-1;i >= 0;i--){
+            board.append("| ");
+            for(int j = 0; j < LARGURA; j++){
+                if(i >= tabuleiro.get(j).size())
+                    board.append("  | ");
+                else
+                    board.append(players.get(tabuleiro.get(j).get(i).getJogador()).getSymbol()).append(" | ");
+            }
+            board.append("\n");
+        }
+        board.append("-----------------------------\n");
+        board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
+        return board;
+    }
+
     public int getTurnoCreditos(){
         return turnoCreditos;
     }
 
-    public void setTurnoCreditos(){
-        turnoCreditos++;
+    public int getCreditos() {
+        return players.get(vezJogador).getCreditos();
     }
 
-    public void resetTurnoCreditos(){
-        turnoCreditos = -1;
+    public int getVezJogador() {
+        return vezJogador;
+    }
+
+    public int getMiniJogo() {
+        return players.get(vezJogador).getMinigame();
+    }
+
+    public int getPecaEspecial(int vez) {
+        return players.get(vez).getPecaEspecial();
+    }
+
+    public int getPecaEspecial() {
+        return players.get(vezJogador).getPecaEspecial();
+    }
+
+    // ____________SET____________
+
+    public void setTurnoCreditos(){
+        turnoCreditos++;
     }
 
     public void setTipo(int tipo){
@@ -69,6 +116,123 @@ public class Jogo implements Serializable, Cloneable {
             this.players.add(new Jogador(nome,TipoJogador.AI,symbol, NUMMG));
     }
 
+    public void setVezJogador(){
+        vezJogador=(vezJogador+1)%2;
+    }
+
+    public void setCreditos(int i,int vez) {
+        players.get(vez).setCreditos(i);
+    }
+
+    public void setPecaEspecial(int vez, int num){
+        players.get(vez).setPecaEspecial(num);
+    }
+
+    public void setMinigame() {
+        players.get(vezJogador).setMinigame(NUMMG);
+    }
+
+    public void atualizaBonus() {
+        players.get(vezJogador).decrementaBonus();
+    }
+
+    public void addPecaEspecial(){
+        this.players.get(vezJogador).adicionaPecaEspecial();
+    }
+
+    //__________________RESET_____________________
+
+    public void resetMinijogo() {
+        minijogo = Erro.JogadaValida;
+    }
+
+    public void resetTurnoCreditos(){
+        turnoCreditos = -1;
+    }
+
+    public void resetBonus(int pontos){
+        players.get(vezJogador).setBonus(RONDASPBONUS);
+        if(pontos == -2){
+            minijogo = Erro.NaoJogou;
+        }else if (pontos < 5){
+            minijogo = Erro.Perdeu;
+        }else{
+            minijogo = Erro.Ganhou;
+        }
+    }
+
+    ///________________CHECK_________________
+
+    public boolean isHistorico() {
+        return historico;
+    }
+
+    public Erro isMinigame(){
+        return minijogo;
+    }
+
+    public Boolean isPlayable(){
+        int contador=0;
+        for(ArrayList<Peca> e : tabuleiro)
+            if(e.size()==ALTURA)
+                contador++;
+        return contador != LARGURA;
+    }
+
+    public boolean checkMiniGame() {
+        return players.get(vezJogador).getBonus() == 0;
+    }
+
+    public boolean isWinner(){
+        for(int linha = 0; linha<ALTURA;linha++){ // verifica se tem na horizontal
+            for(int col = 0; col<LARGURA-3;col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getJogador() == tabuleiro.get(col+1).get(linha).getJogador()
+                    && tabuleiro.get(col+1).get(linha).getJogador()== tabuleiro.get(col+2).get(linha).getJogador()
+                    && tabuleiro.get(col+2).get(linha).getJogador() == tabuleiro.get(col+3).get(linha).getJogador()){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+        for(int col = 0; col<LARGURA;col++){ // verifica se tem na vertical
+            for(int linha = 0; linha<ALTURA-3;linha++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getJogador() == tabuleiro.get(col).get(linha+1).getJogador()
+                            && tabuleiro.get(col).get(linha+1).getJogador() == tabuleiro.get(col).get(linha+2).getJogador()
+                            && tabuleiro.get(col).get(linha+2).getJogador() == tabuleiro.get(col).get(linha+3).getJogador()){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+        for(int linha = 3; linha<ALTURA; linha++){ // verifica se tem na diagonal asc
+            for(int col = 3; col < LARGURA; col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getJogador() == tabuleiro.get(col-1).get(linha-1).getJogador()
+                            && tabuleiro.get(col-1).get(linha-1).getJogador() == tabuleiro.get(col-2).get(linha-2).getJogador()
+                            && tabuleiro.get(col-2).get(linha-2).getJogador() == tabuleiro.get(col-3).get(linha-3).getJogador()){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+        for(int linha = 3; linha < ALTURA ;linha++){ // verifica se tem na diagonal desc
+            for(int col = 0; col < LARGURA - 3 ;col++){
+                try{
+                    if(tabuleiro.get(col).get(linha).getJogador() == tabuleiro.get(col+1).get(linha-1).getJogador()
+                            && tabuleiro.get(col+1).get(linha-1).getJogador() == tabuleiro.get(col+2).get(linha-2).getJogador()
+                            && tabuleiro.get(col+2).get(linha-2).getJogador() == tabuleiro.get(col+3).get(linha-3).getJogador()){
+                        return true;
+                    }
+                }catch (IndexOutOfBoundsException ignored){}
+            }
+        }
+        return false;
+    }
+
+    // ___________________LOGICA__________________
+
     public boolean comecaJogo() {
         if(players.size()!=2){
             return false;
@@ -82,90 +246,6 @@ public class Jogo implements Serializable, Cloneable {
         vezJogador= (int) (Math.random()*2);
         players.get(vezJogador).decrementaBonus();
         return true;
-    }
-
-    public TipoJogador getTipoJogador(){
-        return players.get(vezJogador).getTipo();
-    }
-
-    public String getNomeJogadorVez(){
-        return players.get(vezJogador).getNome();
-    }
-
-
-    public StringBuilder getBoard() {
-        StringBuilder board= new StringBuilder();
-        board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
-        board.append("-----------------------------\n");
-        for(int i = ALTURA-1;i >= 0;i--){
-            board.append("| ");
-            for(int j = 0; j < LARGURA; j++){
-                if(i >= tabuleiro.get(j).size())
-                    board.append("  | ");
-                else
-                   board.append(players.get(tabuleiro.get(j).get(i).getJogador()).getSymbol()).append(" | ");
-            }
-            board.append("\n");
-        }
-        board.append("-----------------------------\n");
-        board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
-        return board;
-    }
-
-    public void setVezJogador(){
-        vezJogador=(vezJogador+1)%2;
-    }
-
-    public boolean isWinner(){
-
-        for(int linha = 0; linha<ALTURA;linha++){ // verifica se tem na horizontal
-            for(int col = 0; col<LARGURA-3;col++){
-                try{
-                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+1).get(linha).getJogador()).getSymbol()
-                    && players.get(tabuleiro.get(col+1).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol()
-                    && players.get(tabuleiro.get(col+2).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+3).get(linha).getJogador()).getSymbol()){
-                        return true;
-                    }
-                }catch (IndexOutOfBoundsException ignored){}
-            }
-        }
-
-        for(int col = 0; col<LARGURA;col++){ // verifica se tem na vertical
-            for(int linha = 0; linha<ALTURA-3;linha++){
-                try{
-                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+1).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col).get(linha+1).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+2).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col).get(linha+2).getJogador()).getSymbol() == players.get(tabuleiro.get(col).get(linha+3).getJogador()).getSymbol()){
-                        return true;
-                    }
-                }catch (IndexOutOfBoundsException ignored){}
-            }
-        }
-
-        for(int linha = 3; linha<ALTURA;linha++){ // verifica se tem na diagonal asc
-            for(int col = 0; col < LARGURA-3;col++){
-                try{
-                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col-1).get(linha-1).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col-1).get(linha-1).getJogador()).getSymbol() == players.get(tabuleiro.get(col-2).get(linha-2).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col-2).get(linha-2).getJogador()).getSymbol() == players.get(tabuleiro.get(col-3).get(linha-3).getJogador()).getSymbol()){
-                        return true;
-                    }
-                }catch (IndexOutOfBoundsException ignored){}
-            }
-        }
-
-        for(int linha = 3; linha < ALTURA ;linha++){ // verifica se tem na diagonal desc
-            for(int col = 0; col < LARGURA - 3 ;col++){
-                try{
-                    if(players.get(tabuleiro.get(col).get(linha).getJogador()).getSymbol() == players.get(tabuleiro.get(col+1).get(linha-1).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col+1).get(linha-1).getJogador()).getSymbol() == players.get(tabuleiro.get(col+2).get(linha-2).getJogador()).getSymbol()
-                            && players.get(tabuleiro.get(col+2).get(linha-2).getJogador()).getSymbol() == players.get(tabuleiro.get(col+3).get(linha-3).getJogador()).getSymbol()){
-                        return true;
-                    }
-                }catch (IndexOutOfBoundsException ignored){}
-            }
-        }
-        return false;
     }
 
     public Erro fazJogada(int coluna) {
@@ -206,56 +286,6 @@ public class Jogo implements Serializable, Cloneable {
             return Erro.TabuleiroCheio;
         return Erro.JogadaValida;
     }
-    public Boolean isPlayable(){
-        int contador=0;
-        for(ArrayList<Peca> e : tabuleiro)
-            if(e.size()==ALTURA)
-                contador++;
-        return contador != LARGURA;
-    }
-
-    public boolean checkMiniGame() {
-        return players.get(vezJogador).getBonus() == 0;
-    }
-
-    public void atualizaBonus() {
-        players.get(vezJogador).decrementaBonus();
-    }
-
-    public void resetBonus(int pontos){
-        players.get(vezJogador).setBonus(RONDASPBONUS);
-        if(pontos == -2){
-            minijogo = Erro.NaoJogou;
-        }else if (pontos < 5){
-            minijogo = Erro.Perdeu;
-        }else{
-            minijogo = Erro.Ganhou;
-        }
-    }
-
-    public void addPecaEspecial(){
-        this.players.get(vezJogador).adicionaPecaEspecial();
-    }
-
-    public int getMiniJogo() {
-        return players.get(vezJogador).getMinigame();
-    }
-
-    public void setPecaEspecial(int vez, int num){
-        players.get(vez).setPecaEspecial(num);
-    }
-
-    public int getPecaEspecial(int vez) {
-        return players.get(vez).getPecaEspecial();
-    }
-
-    public int getPecaEspecial() {
-        return players.get(vezJogador).getPecaEspecial();
-    }
-
-    public void setMinigame() {
-        players.get(vezJogador).setMinigame(NUMMG);
-    }
 
     public int jogaMinijogo(){
         MiniGame minijogo;
@@ -285,35 +315,13 @@ public class Jogo implements Serializable, Cloneable {
         return Erro.JogadaValida;
     }
 
-    public boolean isHistorico() {
-        return historico;
-    }
-
     public void innitReplay(ArrayList<Jogo> jogos) {
         historico = true;
         jogadas = jogos;
         jogada = -1;
     }
 
-    public Erro isMinigame(){
-        return minijogo;
-    }
-
-    public void resetMinijogo() {
-        minijogo = Erro.JogadaValida;
-    }
-
-    public int getCreditos() {
-        return players.get(vezJogador).getCreditos();
-    }
-
-    public void setCreditos(int i,int vez) {
-        players.get(vez).setCreditos(i);
-    }
-
-    public int getVezJogador() {
-        return vezJogador;
-    }
+    //_________________OVERRIDE_______________________
 
     @Override
     public Object clone(){

@@ -1,15 +1,15 @@
 package jogo.logica.dados.minigames;
 
-import jogo.auxfunc.*;
+import jogo.auxfunc.auxFunc;
 
 import java.io.*;
 import java.util.*;
 
 public class EscrevePalavras extends MiniGame{
 
-    private final int NUMPALAVRAS=5;
-    private final String path = "palavras.txt";
-    private ArrayList<String> palavras;
+    private final String path = "./src/jogo/logica/dados/minigames/palavras.txt";
+
+    private final ArrayList<String> palavras;
 
     public EscrevePalavras(){
         pontos=0;
@@ -23,7 +23,7 @@ public class EscrevePalavras extends MiniGame{
 
     public void lerFTexto( String nome) throws IOException{
             try {
-                File txt = new File("./src/jogo/logica/dados/minigames/palavras.txt");
+                File txt = new File(path);
                 Scanner leitorFich = new Scanner(txt);
                 while (leitorFich.hasNextLine()) {
                     palavras.add(leitorFich.nextLine().toLowerCase());
@@ -44,13 +44,13 @@ public class EscrevePalavras extends MiniGame{
         String input;
         String [] inputS;
         long letras = 0;
-        for(int i = 0;i<NUMPALAVRAS;i++){
+        for(int i = 0;i<NECESSARIO;i++){
             palavrasEscolhidas.add(palavras.get(randomNum(palavras.size())));
             letras += palavrasEscolhidas.get(i).length();
         }
 
         long start = System.currentTimeMillis();
-        long end = start + ((letras+NUMPALAVRAS-1)/2)*1000;
+        long end = start + ((letras+NECESSARIO-1)/2)*1000;
         while (System.currentTimeMillis() < end) {
             System.out.println(palavrasEscolhidas);
             input = auxFunc.pedeString("");
@@ -70,7 +70,7 @@ public class EscrevePalavras extends MiniGame{
                 if(teste==0)
                     System.out.println("Palavra " + (i+1) + " Errada!");
             }
-            if(pontos==NUMPALAVRAS)
+            if(pontos==NECESSARIO)
                 break;
         }
         if(System.currentTimeMillis() < end){

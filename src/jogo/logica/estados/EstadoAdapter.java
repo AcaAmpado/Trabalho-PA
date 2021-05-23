@@ -10,7 +10,8 @@ public abstract class EstadoAdapter implements IEstado {
 
     @Override
     public IEstado start() {
-        return null;
+        jogo.setupJogo();
+        return new GameMode(jogo);
     }
 
     @Override
@@ -25,11 +26,6 @@ public abstract class EstadoAdapter implements IEstado {
 
     @Override
     public IEstado passaTurno() {
-        return null;
-    }
-
-    @Override
-    public IEstado acabaJogo() {
         return null;
     }
 

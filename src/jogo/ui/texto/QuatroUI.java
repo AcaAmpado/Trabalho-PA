@@ -35,6 +35,7 @@ public class QuatroUI {
             }
         }
     }
+    //______________________UI________________________
 
     private void uiInicio(){
         System.out.println("Bem Vindo ao Jogo do Quatro em Linha!");
@@ -195,38 +196,6 @@ public class QuatroUI {
         }
     }
 
-    private void utilizaCreditos() {
-        switch (maquinaEstados.usaCreditos(auxFunc.lerInteiro("Introduza o numero de creditos que pretende usar:",1,5))){
-            case JogadaValida -> System.out.println("Creditos usados com sucesso!");
-            case SemCreditos -> System.out.println("Não tem creditos suficientes!");
-            case SemJogadas -> System.out.println("Não existem jogadas para o numero de creditos!");
-            case VoltarAntesCreditos -> System.out.println("Não é possivel para a ronda antes de terem sido usados os ultimos creditos!");
-        }
-    }
-
-    private boolean sairGuarda(){
-        System.out.println("Pretende Guardar antes de sair?");
-        switch (auxFunc.escolherOpcao("Guardar e Sair", "Sair sem Guardar", "Cancelar")) {
-            case 1:
-                if(guardaJogo()){
-                    System.out.println("Erro a guardar Jogo!");
-                    return false;
-                }
-                return true;
-            case 2:
-                return true;
-            case 0:
-                return false;
-            default:
-                System.out.println("Erro critico!");
-                return true;
-        }
-    }
-
-    private boolean guardaJogo(){
-        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:")+".dat");
-    }
-
     private void uiCarrega(){
          if(!maquinaEstados.carregaJogo(auxFunc.pedeString("Introduza o nome do ficheiro que pretende carregar:")+".dat")){
              System.out.println("Não foi possivel carregar o jogo!");
@@ -333,5 +302,39 @@ public class QuatroUI {
                 sair=true;
             }
         }
+    }
+
+    //_________________MENUS_AUXILIARES_______
+
+    private void utilizaCreditos() {
+        switch (maquinaEstados.usaCreditos(auxFunc.lerInteiro("Introduza o numero de creditos que pretende usar:",1,5))){
+            case JogadaValida -> System.out.println("Creditos usados com sucesso!");
+            case SemCreditos -> System.out.println("Não tem creditos suficientes!");
+            case SemJogadas -> System.out.println("Não existem jogadas para o numero de creditos!");
+            case VoltarAntesCreditos -> System.out.println("Não é possivel para a ronda antes de terem sido usados os ultimos creditos!");
+        }
+    }
+
+    private boolean sairGuarda(){
+        System.out.println("Pretende Guardar antes de sair?");
+        switch (auxFunc.escolherOpcao("Guardar e Sair", "Sair sem Guardar", "Cancelar")) {
+            case 1:
+                if(guardaJogo()){
+                    System.out.println("Erro a guardar Jogo!");
+                    return false;
+                }
+                return true;
+            case 2:
+                return true;
+            case 0:
+                return false;
+            default:
+                System.out.println("Erro critico!");
+                return true;
+        }
+    }
+
+    private boolean guardaJogo(){
+        return maquinaEstados.guardaJogo(auxFunc.pedeString("Introduza o nome para o save:")+".dat");
     }
 }
