@@ -39,6 +39,7 @@ public class Jogo implements Serializable, Cloneable {
         }
         historico = false;
         turnoCreditos=0;
+        minijogo=Erro.Critico;
     }
 
     // ____________GET____________
@@ -142,10 +143,6 @@ public class Jogo implements Serializable, Cloneable {
 
     //__________________RESET_____________________
 
-    public void resetMinijogo() {
-        minijogo = Erro.JogadaValida;
-    }
-
     public void resetTurnoCreditos(){
         turnoCreditos = -1;
     }
@@ -156,9 +153,9 @@ public class Jogo implements Serializable, Cloneable {
             minijogo = Erro.NaoJogou;
         }else if (pontos < 5){
             minijogo = Erro.Perdeu;
-        }else{
+        }else if(pontos == 5){
             minijogo = Erro.Ganhou;
-        }
+        }else minijogo = Erro.Critico;
     }
 
     ///________________CHECK_________________
@@ -258,22 +255,20 @@ public class Jogo implements Serializable, Cloneable {
         }
         if(!isPlayable())
             return Erro.TabuleiroCheio;
-        minijogo = Erro.JogadaValida;
         return Erro.JogadaValida;
     }
 
     public Erro jogaPecaEspecial(int coluna) {
-        minijogo=Erro.JogadaValida;
         if(players.get(vezJogador).getPecaEspecial()==0){
             return Erro.SemEspecial;
         }
+        minijogo=Erro.Especial;
         tabuleiro.get(coluna).clear();
         players.get(vezJogador).removePecaEspecial();
         return Erro.JogadaValida;
     }
 
     public Erro jogaAI() {
-        minijogo = Erro.AI;
         while(isPlayable()){
             Erro erro = fazJogada((int)(Math.random()*ALTURA));
             if(erro != Erro.ColunaCheia)
@@ -330,6 +325,7 @@ public class Jogo implements Serializable, Cloneable {
             clone = (Jogo) super.clone();
             clone.tipo = this.tipo ;
             clone.vezJogador = this.vezJogador;
+            clone.minijogo = this.minijogo;
             ArrayList<Jogador> clonePlayers = new ArrayList<>(players.size());
 
             for(Jogador jog:players) // Clone de Jogadores

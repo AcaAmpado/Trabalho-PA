@@ -324,11 +324,13 @@ public class MaquinaEstados {
         atual = atual.aguardaPassarTurno();
     }
 
-    public void passaTurnoHistorico() {
+    public Erro passaTurnoHistorico() {
         if(jogo.replayHistorico() == Erro.FimJogo){
             addLog(Situacao.GameOver.toString());
             atual=atual.terminaJogo();
+            return Erro.Ganhou;
         }
+        return Erro.JogadaValida;
     }
 
     public void guardaHistoricoF() throws IOException {
@@ -347,7 +349,6 @@ public class MaquinaEstados {
 
     private void guardaState(){
         tempJogo.add((Jogo) jogo.clone());
-        jogo.resetMinijogo();
         jogo.setTurnoCreditos();
     }
 
@@ -367,11 +368,12 @@ public class MaquinaEstados {
             return Erro.SemJogadas;
         }
         temporario.setCreditos( jogo.getCreditos ()-numCr, jogo.getVezJogador());
-        temporario.resetBonus(jogo.getVezJogador());
+        temporario.resetBonus(6);
         temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
         temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
         jogo = temporario;
-        jogo.setVezJogador();
+        if(tempJogo.size()-1-numCr!=0)
+            jogo.setVezJogador();
         jogo.resetTurnoCreditos();
         addLog(Situacao.Jogada.toString());
         atual = new Jogada(jogo);

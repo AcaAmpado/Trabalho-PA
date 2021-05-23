@@ -109,7 +109,7 @@ public class QuatroUI {
 
     private void uiJogada(){
         System.out.println(maquinaEstados.getBoard());
-        System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez());
+        System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez() +" Tipo: "+maquinaEstados.getTipoJogador().toString());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
             switch (auxFunc.escolherOpcao("Fazer Jogada", "Guardar Jogo", "LogsME" , "Sair")) {
                 case 1:
@@ -217,17 +217,18 @@ public class QuatroUI {
         if(maquinaEstados.isHistorico()){
             System.out.println("Jogador "+ maquinaEstados.getNomeJogadorVez());
             Erro erro = maquinaEstados.isMinigame();
-            if(erro == Erro.Perdeu){
-                System.out.println("O jogador jogou um minijogo e perdeu!");
-            }else if (erro == Erro.Ganhou){
-                System.out.println("O jogador jogou um minijogo e ganhou uma peça especial!");
-            }
-            else if(erro == Erro.NaoJogou){
-                System.out.println("O jogador optou por nao jogar o minijogo");
+            switch (erro){
+                case Perdeu -> System.out.println("O jogador jogou um minijogo e perdeu!");
+                case Ganhou -> System.out.println("O jogador jogou um minijogo e ganhou uma peça especial!");
+                case NaoJogou -> System.out.println("O jogador optou por nao jogar o minijogo");
+                case Especial -> System.out.println("O jogador jogou uma peca especial");
             }
             System.out.println(maquinaEstados.getBoard());
             switch (auxFunc.escolherOpcao("Passar Turno", "Sair")) {
-                case 1 -> maquinaEstados.passaTurnoHistorico();
+                case 1 -> {
+                    if(maquinaEstados.passaTurnoHistorico()==Erro.Ganhou)
+                        System.out.println("O jogador "+ maquinaEstados.getNomeJogadorVez() +" ganhou!");
+                }
                 case 0 -> maquinaEstados.terminaJogo();
             }
             return;
@@ -282,7 +283,7 @@ public class QuatroUI {
                 if(maquinaEstados.jogaMinijogo()>=5){
                     System.out.println("Ganhou uma Peça Especial");
                 }
-                    else {
+                else {
                     System.out.println("Perdeu o minijogo");
                 }
             }
