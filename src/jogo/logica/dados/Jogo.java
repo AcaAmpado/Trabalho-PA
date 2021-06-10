@@ -1,5 +1,6 @@
 package jogo.logica.dados;
 
+
 import jogo.logica.dados.minigames.EscrevePalavras;
 import jogo.logica.dados.minigames.MiniGame;
 import jogo.logica.dados.minigames.RandomContas;
@@ -12,12 +13,14 @@ public class Jogo implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 4L;
 
+    private Erro estadoErro;
+
     public static final int NUMCREDITOS = 5;
     public static final int RONDASPBONUS = 4;
     private static final int LARGURA = 7;
     private static final int ALTURA = 6;
     private static final int NUMMG = 2; //Num de minijogos
-    private int turnoCreditos;
+    //private int turnoCreditos;
     private int tipo;
     private ArrayList<Jogador>  players;
     private ArrayList<ArrayList<Peca>> tabuleiro;
@@ -26,6 +29,7 @@ public class Jogo implements Serializable, Cloneable {
     private ArrayList<Jogo> jogadas;
     private int jogada;
     private Erro minijogo;
+    private MiniGame miniGame;
 
     public Jogo (){
        setupJogo();
@@ -38,7 +42,7 @@ public class Jogo implements Serializable, Cloneable {
             tabuleiro.add(new ArrayList<>());
         }
         historico = false;
-        turnoCreditos=0;
+        //turnoCreditos=0;
         minijogo=Erro.Critico;
     }
 
@@ -71,9 +75,9 @@ public class Jogo implements Serializable, Cloneable {
         return board;
     }
 
-    public int getTurnoCreditos(){
+    /*public int getTurnoCreditos(){
         return turnoCreditos;
-    }
+    }*/
 
     public int getCreditos() {
         return players.get(vezJogador).getCreditos();
@@ -97,9 +101,13 @@ public class Jogo implements Serializable, Cloneable {
 
     // ____________SET____________
 
-    public void setTurnoCreditos(){
-        turnoCreditos++;
+    public void setEstadoErro(Erro estado){
+        estadoErro=estado;
     }
+
+    /*public void setTurnoCreditos(){
+        turnoCreditos++;
+    }*/
 
     public void setTipo(int tipo){
         this.tipo = tipo;
@@ -143,12 +151,12 @@ public class Jogo implements Serializable, Cloneable {
 
     //__________________RESET_____________________
 
-    public void resetTurnoCreditos(){
+    /*public void resetTurnoCreditos(){
         turnoCreditos = -1;
-    }
+    }*/
 
     public void resetMinijogo() {
-        minijogo=Erro.Critico;
+        minijogo=Erro.SemErros;
     }
 
     public void resetBonus(int pontos){
@@ -159,7 +167,7 @@ public class Jogo implements Serializable, Cloneable {
             minijogo = Erro.Perdeu;
         }else if(pontos == 5){
             minijogo = Erro.Ganhou;
-        }else minijogo = Erro.Critico;
+        }else minijogo = Erro.SemErros;
     }
 
     ///________________CHECK_________________
@@ -286,18 +294,6 @@ public class Jogo implements Serializable, Cloneable {
         return Erro.JogadaValida;
     }
 
-    public int jogaMinijogo(){
-        MiniGame minijogo;
-        switch (getMiniJogo()){
-            case 0 -> minijogo = new RandomContas();
-            case 1 -> minijogo = new EscrevePalavras();
-            default -> {
-                return -1;
-            }
-        }
-        return minijogo.joga();
-    }
-
     public Erro replayHistorico() {
         jogada++;
         try{
@@ -354,6 +350,54 @@ public class Jogo implements Serializable, Cloneable {
     public String toString() {
         return "| "+players.get(0).getTipo().toString()+" - " + players.get(0).getNome()+" Simb: "+ players.get(0).getSymbol() +" vs " +
                 " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" Simb: "+ players.get(1).getSymbol() +" |";
+    }
+
+    public Erro getEstadoErro() {
+        return estadoErro;
+    }
+
+    public void startJogadas() {
+        jogadas= new ArrayList<>();
+    }
+
+    public void guardaJogada() {
+        jogadas.add((Jogo) this.clone());
+        //this.setTurnoCreditos();
+        this.resetMinijogo();
+    }
+
+    public ArrayList<Jogo> getJogadas() {
+        return jogadas;
+    }
+
+    public void startMiniGame() {
+        switch(getMiniJogo()){
+            case 0 ->{
+                miniGame = new RandomContas();
+                miniGame.startTimer();
+            }
+            case 1 ->{
+                miniGame = new EscrevePalavras();
+                miniGame.startTimer();
+            }
+        }
+    }
+
+    public String getRules() {
+        return miniGame.rules();
+    }
+
+    public String getPergunta() {
+        return miniGame.getPergunta();
+    }
+
+    public MiniGame getMiniGame(){
+        return miniGame;
+    }
+
+
+    public void setJogadas(ArrayList<Jogo> jogadas ) {
+        this.jogadas = jogadas;
     }
 }
 

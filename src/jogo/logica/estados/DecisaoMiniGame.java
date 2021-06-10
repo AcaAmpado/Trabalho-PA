@@ -11,11 +11,14 @@ public class DecisaoMiniGame extends EstadoAdapter{
 
     @Override
     public IEstado startMiniGame() {
+        jogo.resetMinijogo();
+        jogo.startMiniGame();
         return new MiniGame(jogo);
     }
 
     @Override
-    public IEstado passaTurno() {
+    public IEstado semMinigame() {
+        jogo.resetBonus(-2);
         return new Jogada(jogo);
     }
 

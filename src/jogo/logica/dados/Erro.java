@@ -1,3 +1,3 @@
 package jogo.logica.dados;
 
-public enum Erro {Critico, Especial, Ganhou, ColunaCheia, JogadaValida, SemEspecial,TabuleiroCheio, SemJogosHist, FimJogo, Perdeu, NaoJogou, AI, SemCreditos,SemJogadas, VoltarAntesCreditos}
+public enum Erro {Critico, Creditos, SemErros, Especial, Ganhou, ColunaCheia, JogadaValida, SemEspecial,TabuleiroCheio, FimJogo, Perdeu, NaoJogou, SemCreditos, SemJogadas, VoltarAntesCreditos}

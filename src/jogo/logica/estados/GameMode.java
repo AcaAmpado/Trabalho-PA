@@ -10,7 +10,8 @@ public class GameMode extends EstadoAdapter{
     }
 
     @Override
-    public IEstado selGameMode() {
+    public IEstado selGameMode(int tipo) {
+        jogo.setTipo(tipo);
         return new NamePlayers(jogo);
     }
 

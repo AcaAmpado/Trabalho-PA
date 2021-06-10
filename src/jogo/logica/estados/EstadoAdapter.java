@@ -3,7 +3,10 @@ package jogo.logica.estados;
 import jogo.logica.Situacao;
 import jogo.logica.dados.Jogo;
 
+import java.util.ArrayList;
+
 public abstract class EstadoAdapter implements IEstado {
+
     Jogo jogo;
 
     public EstadoAdapter(Jogo jogo){this.jogo = jogo;}
@@ -15,8 +18,13 @@ public abstract class EstadoAdapter implements IEstado {
     }
 
     @Override
+    public IEstado usaCreditos(int numCr) {
+        return this;
+    }
+
+    @Override
     public IEstado historicoJogos() {
-        return null;
+        return this;
     }
 
     @Override
@@ -26,22 +34,17 @@ public abstract class EstadoAdapter implements IEstado {
 
     @Override
     public IEstado passaTurno() {
-        return null;
+        return this;
     }
 
     @Override
     public IEstado aguardaPassarTurno() {
-        return null;
+        return this;
     }
 
     @Override
     public IEstado startMiniGame() {
-        return null;
-    }
-
-    @Override
-    public IEstado decideMiniGame() {
-        return null;
+        return this;
     }
 
     @Override
@@ -50,17 +53,46 @@ public abstract class EstadoAdapter implements IEstado {
     }
 
     @Override
-    public IEstado comecaJogo() {
-        return null;
+    public IEstado jogaMinijogo(double numero) {
+        return this;
+    }
+    @Override
+    public IEstado jogaMinijogo(String input) {
+        return this;
     }
 
     @Override
-    public IEstado continuaJogada() {
-        return null;
+    public IEstado jogaPecaEspecial(int coluna) {
+        return this;
     }
 
     @Override
-    public IEstado selGameMode() {
-        return null;
+    public IEstado fazJogada(int coluna) {
+        return this;
+    }
+
+    @Override
+    public IEstado comecaJogo(String player1, String player2) {
+        return this;
+    }
+
+    @Override
+    public IEstado passaTurnoHistorico() {
+        return this;
+    }
+
+    @Override
+    public IEstado semMinigame() {
+        return this;
+    }
+
+    @Override
+    public IEstado jogaAI() {
+        return this;
+    }
+
+    @Override
+    public IEstado selGameMode(int tipo) {
+        return this;
     }
 }

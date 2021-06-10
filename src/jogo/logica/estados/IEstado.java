@@ -1,6 +1,9 @@
 package jogo.logica.estados;
 
 import jogo.logica.Situacao;
+import jogo.logica.dados.Jogo;
+
+import java.util.ArrayList;
 
 public interface IEstado {
 
@@ -8,9 +11,9 @@ public interface IEstado {
 
     IEstado start();
 
-    IEstado comecaJogo();
+    IEstado comecaJogo(String player1, String player2);
 
-    IEstado selGameMode();
+    IEstado selGameMode(int tipo);
 
     IEstado historicoJogos();
 
@@ -20,9 +23,21 @@ public interface IEstado {
 
     IEstado terminaJogo();
 
-    IEstado decideMiniGame();
-
     IEstado startMiniGame();
 
-    IEstado continuaJogada();
+    IEstado usaCreditos(int numCr);
+
+    IEstado fazJogada(int coluna);
+
+    IEstado jogaPecaEspecial(int coluna);
+
+    IEstado jogaAI();
+
+    IEstado passaTurnoHistorico();
+
+    IEstado semMinigame();
+
+    IEstado jogaMinijogo(double numero);
+
+    IEstado jogaMinijogo(String input);
 }

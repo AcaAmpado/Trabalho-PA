@@ -15,8 +15,40 @@ public class MiniGame extends EstadoAdapter{
     }
 
     @Override
-    public IEstado continuaJogada() {
-        return new Jogada(jogo);
+    public IEstado jogaMinijogo(double numero) {
+        if(jogo.getMiniGame().checkTimer()){
+            if(jogo.getMiniGame().verificaInput(numero)){ // tem pontuação necessária
+                return endGame();
+            }
+        } else { //Acabou o tempo
+            return endGame();
+        }
+        return this;
+    }
+
+    @Override
+    public IEstado jogaMinijogo(String input) {
+        if(jogo.getMiniGame().checkTimer()){
+            if(jogo.getMiniGame().verificaInput(input)){ // tem pontuaçao necessaria
+                return endGame();
+            }
+        } else { //Acabou o tempo
+            return endGame();
+        }
+        return this;
+    }
+
+    private IEstado endGame(){
+        jogo.resetBonus(jogo.getMiniGame().getPontuacao());
+        if(jogo.getMiniGame().getPontuacao() >= 5){
+            jogo.addPecaEspecial();
+            jogo.setMinigame();
+            return new Jogada(jogo);
+        }
+        else{
+            jogo.setMinigame();
+            return new PassarTurno(jogo);
+        }
     }
 
     @Override

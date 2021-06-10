@@ -11,12 +11,8 @@ public class EscolhaJogoH extends EstadoAdapter{
 
     @Override
     public IEstado aguardaPassarTurno() {
+        jogo.replayHistorico();
         return new PassarTurno(jogo);
-    }
-
-    @Override
-    public IEstado start() {
-        return new GameMode(jogo);
     }
 
     @Override
