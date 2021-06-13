@@ -1,9 +1,11 @@
 package jogo.logica.dados.minigames;
 
-import jogo.auxfunc.auxFunc;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-import java.io.*;
-import java.util.*;
 
 public class EscrevePalavras extends MiniGame{
 
@@ -88,48 +90,6 @@ public class EscrevePalavras extends MiniGame{
     @Override
     public boolean verificaInput(double numero) {
         return false; // nao se deve aplicar
-    }
-
-
-    @Override
-    public int joga() {
-        String input;
-        String [] inputS;
-        long letras = 0;
-        for(int i = 0;i<NECESSARIO;i++){
-            palavrasEscolhidas.add(palavras.get(randomNum(palavras.size())));
-            letras += palavrasEscolhidas.get(i).length();
-        }
-
-        long start = System.currentTimeMillis();
-        long end = start + ((letras+NECESSARIO-1)/2)*1000;
-        while (System.currentTimeMillis() < end) {
-            System.out.println(palavrasEscolhidas);
-            input = auxFunc.pedeString("");
-            inputS = input.split("\\s+");
-            int teste = 0;
-            for (int i = 0; i < inputS.length; i++) {
-                for(int j=0;j<palavrasEscolhidas.size();j++){
-                    teste=0;
-                    if (inputS[i].compareToIgnoreCase(palavrasEscolhidas.get(j)) == 0) {
-                        palavrasEscolhidas.remove(inputS[i].toLowerCase());
-                        pontos++;
-                        teste=1;
-                        break;
-                    }
-                    
-                }
-                if(teste==0)
-                    System.out.println("Palavra " + (i+1) + " Errada!");
-            }
-            if(pontos==NECESSARIO)
-                break;
-        }
-        if(System.currentTimeMillis() < end){
-            return pontos;
-        }
-        System.out.println("Demorou demasiado tempo!");
-        return 0;
     }
 
     private int randomNum(int max){

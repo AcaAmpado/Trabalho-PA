@@ -22,7 +22,8 @@ public class MaquinaEstados {
         atual = new Inicio(jogo);
         try {
             carregaHistoricoF();
-        }catch (IOException | ClassNotFoundException ignored){
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
         }
     }
 
