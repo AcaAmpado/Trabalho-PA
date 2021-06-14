@@ -2,10 +2,7 @@ package jogo.ui.gui;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import jogo.logica.GameObserver;
 
 import javafx.scene.paint.Color;
@@ -17,8 +14,6 @@ import static jogo.ui.gui.Constantes.*;
 public class PrincipalPane extends BorderPane {
 
     private GameObserver gameObserver;
-
-    private Label tabuleiroLabel;
 
     public PrincipalPane (GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -44,7 +39,7 @@ public class PrincipalPane extends BorderPane {
         VBox tabuleiroBox = new VBox(10);
         TabuleiroPane tabuleiroPane = new TabuleiroPane(gameObserver);
 
-        tabuleiroLabel = new Label("TABULEIRO");
+        Label tabuleiroLabel = new Label("TABULEIRO");
         tabuleiroLabel.setFont(FONTE);
 
 /*

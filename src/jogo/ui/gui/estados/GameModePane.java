@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
+import jogo.logica.dados.Erro;
 
 import static jogo.ui.gui.Constantes.*;
 
@@ -25,6 +26,8 @@ public class GameModePane extends VBox {
     Button btLogs;//?
     Button btSair;
     ComboBox<String> comboTipoJogo;
+    TextField carregaJogoText;
+    Label labelErro;
 
     public GameModePane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -46,6 +49,11 @@ public class GameModePane extends VBox {
 
         setPrefSize(TAM_X_MENU,TAM_Y_MENU);
         setMinSize(TAM_X_MENU,TAM_Y_MENU);
+
+        labelErro = new Label(null);
+        labelErro.setVisible(false);
+        labelErro.setTextFill(Color.RED);
+        labelErro.setFont(FONTE_TEXTO);
 
         btNovoJogo = new Button("Novo Jogo");
         btNovoJogo.setFont(FONTE_TEXTO);
@@ -81,7 +89,10 @@ public class GameModePane extends VBox {
         novoJogoBox.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
         novoJogoBox.setPadding(new Insets(10));
 
-        TextField carregaJogoText = new TextField("Nome do ficheiro");
+        carregaJogoText = new TextField();
+        carregaJogoText.setPromptText("Nome do Ficheiro");
+        carregaJogoText.setFont(FONTE_TEXTO);
+
         HBox carregaJogoBox = new HBox(10);
         carregaJogoBox.getChildren().addAll(btCarregarJogo, carregaJogoText);
         carregaJogoBox.setAlignment(Pos.CENTER);
@@ -89,7 +100,7 @@ public class GameModePane extends VBox {
         carregaJogoBox.setPadding(new Insets(10));
 
         VBox menu = new VBox(10);
-        menu.getChildren().addAll(novoJogoBox, carregaJogoBox, btHistorico, btLogs, btSair);
+        menu.getChildren().addAll(novoJogoBox, carregaJogoBox, btHistorico, btLogs, btSair, labelErro);
         menu.setPadding(new Insets(10));
         menu.setAlignment(Pos.CENTER);
 
@@ -110,13 +121,27 @@ public class GameModePane extends VBox {
                 gameObserver.selGameMode(3);
         });
 
-        //btCarregarJogo.setOnAction((e)->gameObserver.carregaJogo()); // tenho que pedir nome do ficheiro
+        btCarregarJogo.setOnAction((e)->{
+            String value;
+                value =  carregaJogoText.getText();
+            if(value.length() < 1){
+                carregaJogoText.requestFocus();
+                return;
+            }
+            gameObserver.carregaJogo(value+".dat");
+            Erro erro=gameObserver.getEstadoErro();
+            if(erro == Erro.Critico)
+            {
+                labelErro.setVisible(true);
+                labelErro.setText("Erro a carregar o jogo!");
+            }
+        });
 
-        //btHistorico.setOnAction((e)->gameObserver.historicoJogos());
+        btHistorico.setOnAction((e)->gameObserver.historicoJogos());
 
        // btLogs.setOnAction((e)->gameObserver.yeet());
 
-        btSair.setOnAction( (e)-> gameObserver.terminar() );
+        btSair.setOnAction( (e)-> gameObserver.terminar());
     }
 
     private void atualiza() {

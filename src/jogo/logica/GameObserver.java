@@ -1,5 +1,7 @@
 package jogo.logica;
 
+import jogo.logica.dados.Erro;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -30,6 +32,11 @@ public class GameObserver {
         return maquinaEstados.getStatus();
     }
 
+    public Erro getEstadoErro() {
+        return maquinaEstados.getEstadoErro();
+    }
+
+
     public void terminar() {
         maquinaEstados.terminar();
         propertyChangeSupport.firePropertyChange("yeet",null,null);
@@ -42,5 +49,16 @@ public class GameObserver {
 
     public void selGameMode(int tipo) {
         maquinaEstados.selGameMode(tipo);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void carregaJogo(String value) {
+        maquinaEstados.carregaJogo(value);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void historicoJogos() {
+        maquinaEstados.historicoJogos();
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
     }
 }

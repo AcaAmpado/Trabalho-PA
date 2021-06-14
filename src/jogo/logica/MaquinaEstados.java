@@ -132,7 +132,7 @@ public class MaquinaEstados {
         } catch (IOException | ClassNotFoundException ignored) {
             return false;
         }
-        return true;
+        return true; // TODO: Verificar se da para nao devolver nada aqui
     }
 
     private IEstado switchState(Situacao readObject) {
