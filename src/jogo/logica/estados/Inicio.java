@@ -13,5 +13,4 @@ public class Inicio extends EstadoAdapter{
         return Situacao.Inicio;
     }
 
-
 }
