@@ -1,11 +1,6 @@
 package jogo.logica.dados.minigames;
 
-import jogo.auxfunc.auxFunc;
-
-import javax.sql.rowset.serial.SerialArray;
-import java.io.Serializable;
-
-public class RandomContas extends MiniGame{
+public class RandomContas extends MiniGame {
 
     private final int MIN = 1, MAX = 10;
     private double resultado;

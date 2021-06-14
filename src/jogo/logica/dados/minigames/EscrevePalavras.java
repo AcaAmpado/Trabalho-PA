@@ -1,13 +1,11 @@
 package jogo.logica.dados.minigames;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class EscrevePalavras extends MiniGame{
+public class EscrevePalavras extends MiniGame {
 
     private final String path = "./src/jogo/logica/dados/minigames/palavras.txt";
 

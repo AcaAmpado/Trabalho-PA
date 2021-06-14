@@ -28,24 +28,13 @@ public class QuatroUI {
                 case DecisaoMiniGame -> uiDecisao();
                 case MiniGame -> uiMiniGame();
                 case GameOver -> uiGameOver();
-
             }
         }
     }
     //______________________UI________________________
 
     private void uiInicio(){
-        System.out.println("Bem Vindo ao Jogo do Quatro em Linha!");
-        System.out.println("Este é um jogo para dois jogadores");
-        System.out.println("Regras:");
-        System.out.println("- Os jogadores jogam alternadamente colocando uma peça da sua cor numa das 7 colunas.");
-        System.out.println("- Ganha o primeiro jogador a colocar 4 peças em linha, quer seja numa coluna, linha ou diagonal!");
-        System.out.println("- Os jogadores possuem "+ Jogo.NUMCREDITOS +" créditos para desfazer jogadas. Cada crédito usado volta atrás uma jogada.");
-        System.out.println("- A cada "+ Jogo.RONDASPBONUS+" rondas o jogador pode escolher participar num minijogo que, se concluído com sucesso, o recompensa com uma peça especial.");
-        System.out.println("- A peça especial permite remover as peças de uma das colunas do jogo.");
-        System.out.println("- Se o jogador perder o minijogo perde a sua vez de jogar.");
-        System.out.println("- Se o tabuleiro ficar cheio o jogo acaba, independentemente do numero de pecas especiais do proximo jogador!");
-        System.out.println("Boa Sorte!");
+        System.out.println(maquinaEstados.getRegras());
         if(auxFunc.lerInteiro("Introduza 1 para continuar ou 0 para sair!") == 0)
             sair=true;
         else
@@ -105,6 +94,7 @@ public class QuatroUI {
     }
 
     private void uiJogada(){
+        System.out.println(maquinaEstados.getEstadoErro());
         System.out.println(maquinaEstados.getBoard());
         System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez() +" Tipo: "+maquinaEstados.getTipoJogador().toString());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){
@@ -156,7 +146,7 @@ public class QuatroUI {
                             System.out.println("Ganhou!");
                         }
                         case ColunaCheia -> System.out.println("Jogada inválida! A coluna já está cheia");
-                        case JogadaValida -> {}
+                        case JogadaValida -> { }
                         case TabuleiroCheio -> {
                             System.out.println(maquinaEstados.getBoard());
                             System.out.println("Jogo Empatou!");
@@ -221,6 +211,7 @@ public class QuatroUI {
             case NaoJogou -> System.out.println("O jogador optou por nao jogar o minijogo");
             case Especial -> System.out.println("O jogador jogou uma peca especial");
             case Creditos -> System.out.println("O jogador utilizou creditos");
+
         }
         System.out.println(maquinaEstados.getBoard());
         switch (auxFunc.escolherOpcao("Passar Turno", "Sair")) {
@@ -312,11 +303,12 @@ public class QuatroUI {
             System.out.println("Nao possui creditos para utilizar!");
             return;
         }
+        System.out.println( maquinaEstados.getEstadoErro().toString());
         switch (maquinaEstados.getEstadoErro()){
             case SemErros -> System.out.println("Creditos usados com sucesso!");
             case SemCreditos -> System.out.println("Não tem creditos suficientes!");
             case SemJogadas -> System.out.println("Não existem jogadas para o numero de creditos!");
-            case VoltarAntesCreditos -> System.out.println("Não é possivel para a ronda antes de terem sido usados os ultimos creditos!");
+            default -> System.out.println("FUCK ME");
         }
     }
 

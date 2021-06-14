@@ -56,6 +56,7 @@ public abstract class EstadoAdapter implements IEstado {
     public IEstado jogaMinijogo(double numero) {
         return this;
     }
+
     @Override
     public IEstado jogaMinijogo(String input) {
         return this;

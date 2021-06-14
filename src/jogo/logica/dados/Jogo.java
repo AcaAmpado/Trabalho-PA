@@ -1,10 +1,8 @@
 package jogo.logica.dados;
 
-
 import jogo.logica.dados.minigames.EscrevePalavras;
 import jogo.logica.dados.minigames.MiniGame;
 import jogo.logica.dados.minigames.RandomContas;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,10 +15,9 @@ public class Jogo implements Serializable, Cloneable {
 
     public static final int NUMCREDITOS = 5;
     public static final int RONDASPBONUS = 4;
-    private static final int LARGURA = 7;
-    private static final int ALTURA = 6;
+    public static final int LARGURA = 7;
+    public static final int ALTURA = 6;
     private static final int NUMMG = 2; //Num de minijogos
-    //private int turnoCreditos;
     private int tipo;
     private ArrayList<Jogador>  players;
     private ArrayList<ArrayList<Peca>> tabuleiro;
@@ -42,11 +39,24 @@ public class Jogo implements Serializable, Cloneable {
             tabuleiro.add(new ArrayList<>());
         }
         historico = false;
-        //turnoCreditos=0;
         minijogo=Erro.Critico;
     }
 
     // ____________GET____________
+
+    public String getRegras(){ //new
+        return  "Bem Vindo ao Jogo do Quatro em Linha!\n" +
+                "Este é um jogo para dois jogadores\n" +
+                "Regras:\n" +
+                "- Os jogadores jogam alternadamente colocando uma peça da sua cor numa das 7 colunas.\n" +
+                "- Ganha o primeiro jogador a colocar 4 peças em linha, quer seja numa coluna, linha ou diagonal!\n" +
+                "- Os jogadores possuem " + NUMCREDITOS + " créditos para desfazer jogadas. Cada crédito usado volta atrás uma jogada.\n" +
+                "- A cada " + RONDASPBONUS + " rondas o jogador pode escolher participar num minijogo que, se concluído com sucesso, o recompensa com uma peça especial.\n" +
+                "- A peça especial permite remover as peças de uma das colunas do jogo.\n" +
+                "- Se o jogador perder o minijogo perde a sua vez de jogar.\n" +
+                "- Se o tabuleiro ficar cheio o jogo acaba, independentemente do numero de pecas especiais do proximo jogador!\n" +
+                "Boa Sorte!\n";
+    }
 
     public TipoJogador getTipoJogador(){
         return players.get(vezJogador).getTipo();
@@ -54,6 +64,26 @@ public class Jogo implements Serializable, Cloneable {
 
     public String getNomeJogadorVez(){
         return players.get(vezJogador).getNome();
+    }
+
+    public ArrayList<ArrayList<String>> getTabuleiro(){ //new GUI
+
+        ArrayList<ArrayList<String>> strTabuleiro = new ArrayList<>();
+
+        for (int i = 0; i < LARGURA ; i++) {
+            strTabuleiro.add(new ArrayList<>());
+        }
+
+        for(int i = ALTURA-1;i >= 0;i--){
+            for(int j = 0; j < LARGURA; j++){
+                if(i >= tabuleiro.get(j).size())
+                    strTabuleiro.get(j).add("NULL");
+                else
+                    strTabuleiro.get(j).add(String.valueOf(players.get(tabuleiro.get(j).get(i).getJogador()).getSymbol()));
+            }
+        }
+
+        return strTabuleiro;
     }
 
     public StringBuilder getBoard() {
@@ -74,10 +104,6 @@ public class Jogo implements Serializable, Cloneable {
         board.append("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
         return board;
     }
-
-    /*public int getTurnoCreditos(){
-        return turnoCreditos;
-    }*/
 
     public int getCreditos() {
         return players.get(vezJogador).getCreditos();
@@ -104,10 +130,6 @@ public class Jogo implements Serializable, Cloneable {
     public void setEstadoErro(Erro estado){
         estadoErro=estado;
     }
-
-    /*public void setTurnoCreditos(){
-        turnoCreditos++;
-    }*/
 
     public void setTipo(int tipo){
         this.tipo = tipo;
@@ -150,10 +172,6 @@ public class Jogo implements Serializable, Cloneable {
     }
 
     //__________________RESET_____________________
-
-    /*public void resetTurnoCreditos(){
-        turnoCreditos = -1;
-    }*/
 
     public void resetMinijogo() {
         minijogo=Erro.SemErros;
@@ -297,13 +315,11 @@ public class Jogo implements Serializable, Cloneable {
     public Erro replayHistorico() {
         jogada++;
         try{
-            this.vezJogador= jogadas.get(jogada).vezJogador;
+            this.vezJogador = jogadas.get(jogada).vezJogador;
             this.tipo = jogadas.get(jogada).tipo;
             this.tabuleiro = jogadas.get(jogada).tabuleiro;
             this.minijogo = jogadas.get(jogada).minijogo;
             this.players = jogadas.get(jogada).players;
-            this.tabuleiro = jogadas.get(jogada).tabuleiro;
-
         }catch (IndexOutOfBoundsException ignored){
             return Erro.FimJogo;
         }
@@ -316,6 +332,32 @@ public class Jogo implements Serializable, Cloneable {
         jogada = -1;
     }
 
+    public void copiaValues(Jogo temp){
+        try {
+            this.tipo = temp.tipo ;
+            this.vezJogador = temp.vezJogador;
+            this.minijogo = temp.minijogo;
+
+            ArrayList<Jogador> clonePlayers = new ArrayList<>();
+
+            for(Jogador jog: temp.players) // Clone de Jogadores
+                clonePlayers.add((Jogador) jog.clone());
+
+            this.players=clonePlayers;
+
+            ArrayList<ArrayList<Peca>> cloneTabuleiro = new ArrayList<>(); //Clone de Tabuleiro
+
+            for (int i = 0; i < LARGURA ; i++) {
+                cloneTabuleiro.add(new ArrayList<>());
+                for(int j = 0 ; j < temp.tabuleiro.get(i).size() ; j++ ){
+                    cloneTabuleiro.get(i).add(new Peca(temp.tabuleiro.get(i).get(j).getJogador()));
+                }
+            }
+            this.tabuleiro=cloneTabuleiro;
+        } catch (CloneNotSupportedException ignored) {
+        }
+    }
+
     //_________________OVERRIDE_______________________
 
     @Override
@@ -326,7 +368,7 @@ public class Jogo implements Serializable, Cloneable {
             clone.tipo = this.tipo ;
             clone.vezJogador = this.vezJogador;
             clone.minijogo = this.minijogo;
-            ArrayList<Jogador> clonePlayers = new ArrayList<>(players.size());
+            ArrayList<Jogador> clonePlayers = new ArrayList<>();
 
             for(Jogador jog:players) // Clone de Jogadores
                 clonePlayers.add((Jogador) jog.clone());
@@ -334,6 +376,7 @@ public class Jogo implements Serializable, Cloneable {
             clone.players=clonePlayers;
 
             ArrayList<ArrayList<Peca>> cloneTabuleiro = new ArrayList<>(); //Clone de Tabuleiro
+
             for (int i = 0; i < LARGURA ; i++) {
                 cloneTabuleiro.add(new ArrayList<>());
                 for(int j = 0 ; j < tabuleiro.get(i).size() ; j++ ){
@@ -362,7 +405,6 @@ public class Jogo implements Serializable, Cloneable {
 
     public void guardaJogada() {
         jogadas.add((Jogo) this.clone());
-        //this.setTurnoCreditos();
         this.resetMinijogo();
     }
 

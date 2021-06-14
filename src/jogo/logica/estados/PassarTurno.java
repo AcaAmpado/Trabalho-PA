@@ -23,6 +23,34 @@ public class PassarTurno extends EstadoAdapter{
     }
 
     @Override
+    public IEstado usaCreditos(int numCr){
+        if(jogo.getCreditos() < numCr) {
+            jogo.setEstadoErro(Erro.SemCreditos);
+            return new Jogada(jogo);
+        }
+        Jogo temporario;
+        try{
+            temporario = (Jogo) jogo.getJogadas().get(jogo.getJogadas().size()-1-numCr).clone();
+        }catch (IndexOutOfBoundsException e){
+            jogo.setEstadoErro(Erro.SemJogadas);
+            return this;
+        }
+        temporario.setCreditos( jogo.getCreditos()-numCr, jogo.getVezJogador());
+        temporario.resetBonus(6);
+        temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
+        temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
+        //TODO: copiar logs e sobrepor aos carregados
+        if(jogo.getJogadas().size()-1-numCr!=0)
+            temporario.setVezJogador();
+        temporario.setEstadoErro(Erro.SemErros);
+        temporario.setJogadas(jogo.getJogadas());
+        jogo.copiaValues(temporario);
+        jogo.setEstadoErro(Erro.SemErros);
+        return new Jogada(jogo);
+    }
+
+
+    @Override
     public IEstado passaTurnoHistorico() {
         jogo.setEstadoErro(jogo.replayHistorico());
         if(jogo.getEstadoErro() == Erro.FimJogo){

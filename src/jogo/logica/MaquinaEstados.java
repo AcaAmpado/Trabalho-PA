@@ -13,17 +13,16 @@ public class MaquinaEstados {
     Jogo jogo;
     IEstado atual;
     ArrayList<ArrayList<Jogo>> historico;
-    ArrayList<String> logME;
+   // ArrayList<String> logME;
 
     public MaquinaEstados(){
         jogo = new Jogo();
         historico = new ArrayList<>();
-        logME = new ArrayList<>();
+        //logME = new ArrayList<>();
         atual = new Inicio(jogo);
         try {
             carregaHistoricoF();
-        }catch (IOException | ClassNotFoundException e){
-            e.printStackTrace();
+        }catch (IOException | ClassNotFoundException ignored){
         }
     }
 
@@ -228,7 +227,10 @@ public class MaquinaEstados {
     //__________________CREDITOS______________________
 
     public void usaCreditos(int numCr) {
-        atual=atual.usaCreditos(numCr);
+        atual = atual.usaCreditos(numCr);
+
+        if(jogo.getEstadoErro() == Erro.SemErros)
+            jogoParaHist(jogo.getJogadas()); // guardar no historico
     }
 
     //___________________TERMINA______________________
@@ -249,5 +251,7 @@ public class MaquinaEstados {
         return jogo.getPergunta();
     }
 
-
+    public String getRegras() {
+        return jogo.getRegras();
+    }
 }

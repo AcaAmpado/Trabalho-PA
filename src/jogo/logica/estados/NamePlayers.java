@@ -4,8 +4,6 @@ import jogo.logica.Situacao;
 import jogo.logica.dados.Erro;
 import jogo.logica.dados.Jogo;
 
-import java.util.ArrayList;
-
 public class NamePlayers extends EstadoAdapter{
 
     public NamePlayers(Jogo jogo) {
