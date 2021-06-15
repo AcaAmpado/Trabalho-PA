@@ -76,6 +76,10 @@ public class MaquinaEstados {
         return historico.get(i).get(0).toString();
     }
 
+    public ArrayList<ArrayList<String>> getTabuleiro() {
+        return jogo.getTabuleiro();
+    }
+
     //_______________________LOG_____________________
 
 /*    public ArrayList<String> getLogME(){

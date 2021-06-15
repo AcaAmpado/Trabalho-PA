@@ -49,11 +49,16 @@ public class InicioPane extends VBox {
         rules.setTextAlignment(TextAlignment.JUSTIFY);
 
         btContinuar = new Button("Continuar");
+        btContinuar.setFont(FONTE_TEXTO);
+
         btSair = new Button("Sair");
+        btSair.setFont(FONTE_TEXTO);
+
         HBox buttonHBox = new HBox(10);
         buttonHBox.getChildren().addAll(btContinuar,btSair);
         buttonHBox.setPadding(new Insets(10));
         buttonHBox.setAlignment(Pos.CENTER);
+
         getChildren().addAll(rules,buttonHBox);
         setSpacing(10);
     }
@@ -61,7 +66,7 @@ public class InicioPane extends VBox {
     private void registarListeners(){
         btContinuar.setOnAction( (e) -> gameObserver.start() );
 
-        btSair.setOnAction( (e)-> gameObserver.terminar() );
+        btSair.setOnAction( (e)-> gameObserver.terminaJogo() );
     }
 
     private void atualiza() {

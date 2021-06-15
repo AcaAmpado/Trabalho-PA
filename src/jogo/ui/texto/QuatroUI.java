@@ -94,7 +94,6 @@ public class QuatroUI {
     }
 
     private void uiJogada(){
-        System.out.println(maquinaEstados.getEstadoErro());
         System.out.println(maquinaEstados.getBoard());
         System.out.println("Jogador: "+ maquinaEstados.getNomeJogadorVez() +" Tipo: "+maquinaEstados.getTipoJogador().toString());
         if(maquinaEstados.getTipoJogador() == TipoJogador.AI){

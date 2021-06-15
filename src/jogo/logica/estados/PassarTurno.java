@@ -26,7 +26,7 @@ public class PassarTurno extends EstadoAdapter{
     public IEstado usaCreditos(int numCr){
         if(jogo.getCreditos() < numCr) {
             jogo.setEstadoErro(Erro.SemCreditos);
-            return new Jogada(jogo);
+            return this;
         }
         Jogo temporario;
         try{
@@ -42,7 +42,6 @@ public class PassarTurno extends EstadoAdapter{
         //TODO: copiar logs e sobrepor aos carregados
         if(jogo.getJogadas().size()-1-numCr!=0)
             temporario.setVezJogador();
-        temporario.setEstadoErro(Erro.SemErros);
         temporario.setJogadas(jogo.getJogadas());
         jogo.copiaValues(temporario);
         jogo.setEstadoErro(Erro.SemErros);

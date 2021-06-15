@@ -29,8 +29,11 @@ public class PrincipalPane extends BorderPane {
     private void criarVista() {
 
         //Escolher Tamanho da Janela
+        setMaxSize(TAM_X_JANELA, TAM_Y_JANELA);
         setPrefSize(TAM_X_JANELA, TAM_Y_JANELA);
         setMinSize(TAM_X_JANELA, TAM_Y_JANELA);
+
+
         //Dar Cor ao background e dar lhe uma border
         setBackground(new Background(new BackgroundFill(Color.GRAY,null, null) ));
         setBorder(new Border( new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID,null,new BorderWidths(5))));
@@ -41,6 +44,7 @@ public class PrincipalPane extends BorderPane {
 
         Label tabuleiroLabel = new Label("TABULEIRO");
         tabuleiroLabel.setFont(FONTE);
+        tabuleiroLabel.setTextFill(Color.WHITE);
 
 /*
         Label coluna1Label = new Label("Coluna 1");
@@ -108,7 +112,6 @@ public class PrincipalPane extends BorderPane {
         PassarTurnoPane passarTurnoPane = new PassarTurnoPane(gameObserver);
 
         StackPane menuBox = new StackPane(decisaoMiniGamePane,escolhaJogoHPane,gameModePane,gameOverPane,inicioPane,jogadaPane,namePlayersPane,passarTurnoPane);
-        menuBox.setPadding (new Insets(300) );
         menuBox.setBorder(new Border(new BorderStroke(Color.BEIGE,BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(5))));
         menuBox.setBackground(new Background(new BackgroundFill(Color.DARKSLATEGREY ,new CornerRadii(12), null)));
         menuBox.setMinSize(TAM_X_MENU,TAM_Y_MENU);

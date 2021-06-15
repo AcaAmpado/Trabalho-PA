@@ -1,6 +1,7 @@
 package jogo.logica;
 
 import jogo.logica.dados.Erro;
+import jogo.logica.dados.TipoJogador;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -8,10 +9,10 @@ import java.util.ArrayList;
 
 public class GameObserver {
 
-    private StateMachine maquinaEstados;
+    private MaquinaEstados maquinaEstados;
     private final PropertyChangeSupport propertyChangeSupport;
 
-    public GameObserver (StateMachine maquinaEstados){
+    public GameObserver (MaquinaEstados maquinaEstados){
         this.maquinaEstados=maquinaEstados;
         propertyChangeSupport= new PropertyChangeSupport(maquinaEstados);
     }
@@ -36,9 +37,8 @@ public class GameObserver {
         return maquinaEstados.getEstadoErro();
     }
 
-
-    public void terminar() {
-        maquinaEstados.terminar();
+    public void terminaJogo() {
+        maquinaEstados.terminaJogo();
         propertyChangeSupport.firePropertyChange("yeet",null,null);
     }
 
@@ -59,6 +59,51 @@ public class GameObserver {
 
     public void historicoJogos() {
         maquinaEstados.historicoJogos();
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void comecaJogo(String jog1, String jog2) {
+        maquinaEstados.comecaJogo(jog1,jog2);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public String getNomeJogadorVez() {
+        return maquinaEstados.getNomeJogadorVez();
+    }
+
+    public TipoJogador getTipoJogador() {
+        return maquinaEstados.getTipoJogador();
+    }
+
+    public int getCreditos() {
+        return maquinaEstados.getCreditos();
+    }
+
+    public int getPecaEspecial() {
+        return maquinaEstados.getPecaEspecial();
+    }
+
+    public void usaCreditos(int numero) {
+        maquinaEstados.usaCreditos(numero);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void fazJogada(int value) {
+        maquinaEstados.fazJogada(value);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public boolean guardaJogo(String nomeFich) {
+        return maquinaEstados.guardaJogo(nomeFich);
+    }
+
+    public void jogaPecaEspecial(int value) {
+        maquinaEstados.jogaPecaEspecial(value);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void jogaAI() {
+        maquinaEstados.jogaAI();
         propertyChangeSupport.firePropertyChange("yeet",null,null);
     }
 }

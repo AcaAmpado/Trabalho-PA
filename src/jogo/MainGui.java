@@ -14,7 +14,7 @@ public class MainGui extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        StateMachine maquinaEstados = new StateMachine();
+        MaquinaEstados maquinaEstados = new MaquinaEstados();
         GameObserver gameObserver = new GameObserver(maquinaEstados);
 
         Root root = new Root(gameObserver);
@@ -22,6 +22,8 @@ public class MainGui extends Application {
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.setTitle("4 em Linha");
 
         primaryStage.show();
     }

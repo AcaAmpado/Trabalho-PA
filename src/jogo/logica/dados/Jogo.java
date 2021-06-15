@@ -437,7 +437,6 @@ public class Jogo implements Serializable, Cloneable {
         return miniGame;
     }
 
-
     public void setJogadas(ArrayList<Jogo> jogadas ) {
         this.jogadas = jogadas;
     }
