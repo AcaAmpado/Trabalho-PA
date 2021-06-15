@@ -2,32 +2,27 @@ package jogo.ui.gui.estados;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
 import jogo.logica.dados.Erro;
-
 import static jogo.ui.gui.Constantes.*;
 
 
 public class GameModePane extends VBox {
 
     private final GameObserver gameObserver;
-    Button btNovoJogo;
-    Button btCarregarJogo;
-    Button btHistorico;
-    Button btLogs;//?
-    Button btSair;
-    ComboBox<String> comboTipoJogo;
-    TextField carregaJogoText;
-    Label labelErro;
+    private Button btNovoJogo;
+    private Button btCarregarJogo;
+    private Button btHistorico;
+    private Button btSair;
+    private ComboBox<String> comboTipoJogo;
+    private TextField carregaJogoText;
+    private Label labelErro;
 
     public GameModePane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -94,7 +89,8 @@ public class GameModePane extends VBox {
         historicoBox.setPadding(new Insets(10));
 
 
-        btLogs = new Button("Logs");
+        //?
+        Button btLogs = new Button("Logs");
         btLogs.setFont(FONTE_TEXTO);
 
         HBox logsBox = new HBox(10);

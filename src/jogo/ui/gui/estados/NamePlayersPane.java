@@ -7,10 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
-import jogo.logica.dados.Erro;
 
 import static jogo.ui.gui.Constantes.*;
 

@@ -2,7 +2,6 @@ package jogo.ui.texto;
 
 import jogo.logica.MaquinaEstados;
 import jogo.logica.dados.Erro;
-import jogo.logica.dados.Jogo;
 import jogo.auxfunc.auxFunc;
 import jogo.logica.dados.TipoJogador;
 import java.io.IOException;
@@ -210,7 +209,6 @@ public class QuatroUI {
             case NaoJogou -> System.out.println("O jogador optou por nao jogar o minijogo");
             case Especial -> System.out.println("O jogador jogou uma peca especial");
             case Creditos -> System.out.println("O jogador utilizou creditos");
-
         }
         System.out.println(maquinaEstados.getBoard());
         switch (auxFunc.escolherOpcao("Passar Turno", "Sair")) {

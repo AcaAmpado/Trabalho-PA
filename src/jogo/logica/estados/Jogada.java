@@ -16,6 +16,10 @@ public class Jogada extends EstadoAdapter{
             jogo.setEstadoErro(Erro.SemCreditos);
             return this;
         }
+        if(jogo.getJogada()-numCr<0){
+            jogo.setEstadoErro(Erro.SemJogadas);
+            return this;
+        }
         Jogo temporario;
         try{
             temporario = (Jogo) jogo.getJogadas().get(jogo.getJogadas().size()-1-numCr).clone();
@@ -24,6 +28,7 @@ public class Jogada extends EstadoAdapter{
             return this;
         }
         temporario.setCreditos( jogo.getCreditos()-numCr, jogo.getVezJogador());
+        temporario.setCreditos( jogo.getCreditos((jogo.getVezJogador()+1)%2), (jogo.getVezJogador()+1)%2);
         temporario.resetBonus(6);
         temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
         temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
@@ -33,6 +38,7 @@ public class Jogada extends EstadoAdapter{
         temporario.setJogadas(jogo.getJogadas());
         jogo.copiaValues(temporario);
         jogo.setEstadoErro(Erro.SemErros);
+        jogo.setJogada(1);
         return new Jogada(jogo);
     }
 

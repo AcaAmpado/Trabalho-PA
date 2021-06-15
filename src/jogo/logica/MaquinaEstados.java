@@ -117,22 +117,31 @@ public class MaquinaEstados {
     //______________________GUARDA_CARREGA________________________
 
     public boolean guardaJogo(String nomeSave) {
+        ArrayList <Jogo> tempJogada = jogo.getJogadas();
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeSave))) {
             out.writeObject(jogo);
             out.writeObject(atual.getStatus());
-            out.writeObject(jogo.getJogadas());
+            out.writeObject(jogo.getJogadas().size());
+            for (int i = 0; i < jogo.getJogadas().size(); i++) {
+                out.writeObject(tempJogada.get(i));
+            }
         } catch (IOException ignored) {
             return false;
         }
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     public boolean carregaJogo(String name) {
+        int temp;
+        ArrayList<Jogo> jogadasTemp = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(name))) {
             jogo = (Jogo) in.readObject();
             atual = switchState((Situacao) in.readObject());
-            jogo.setJogadas((ArrayList<Jogo>) in.readObject());
+            temp = (int) in.readObject();
+            for(int i = 0; i<temp;i++){
+                jogadasTemp.add((Jogo) in.readObject());
+            }
+            jogo.setJogadas(jogadasTemp);
         } catch (IOException | ClassNotFoundException ignored) {
             return false;
         }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class GameObserver {
 
-    private MaquinaEstados maquinaEstados;
+    private final MaquinaEstados maquinaEstados;
     private final PropertyChangeSupport propertyChangeSupport;
 
     public GameObserver (MaquinaEstados maquinaEstados){
@@ -105,5 +105,36 @@ public class GameObserver {
     public void jogaAI() {
         maquinaEstados.jogaAI();
         propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public boolean isHistorico() {
+        return maquinaEstados.isHistorico();
+    }
+
+    public void passaTurnoHistorico() {
+        maquinaEstados.passaTurnoHistorico();
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public void passaTurno() {
+        maquinaEstados.passaTurno();
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public int getHistoricoNum() {
+        return maquinaEstados.getHistoricoNum();
+    }
+
+    public String getJogoHistorico(int i) {
+        return maquinaEstados.getJogoHistorico(i);
+    }
+
+    public void replayHistorico(int id) {
+        maquinaEstados.replayHistorico(id);
+        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    }
+
+    public Erro isMinigame() {
+        return maquinaEstados.isMinigame();
     }
 }

@@ -39,6 +39,7 @@ public class Jogo implements Serializable, Cloneable {
             tabuleiro.add(new ArrayList<>());
         }
         historico = false;
+        jogada=0;
         minijogo=Erro.Critico;
     }
 
@@ -56,6 +57,14 @@ public class Jogo implements Serializable, Cloneable {
                 "- Se o jogador perder o minijogo perde a sua vez de jogar.\n" +
                 "- Se o tabuleiro ficar cheio o jogo acaba, independentemente do numero de pecas especiais do proximo jogador!\n" +
                 "Boa Sorte!\n";
+    }
+
+    public int getJogada(){
+        return jogada;
+    }
+
+    public void setJogada(int num){
+        jogada+=num;
     }
 
     public TipoJogador getTipoJogador(){
@@ -152,7 +161,7 @@ public class Jogo implements Serializable, Cloneable {
     }
 
     public void setCreditos(int i,int vez) {
-        players.get(vez).setCreditos(i);
+        this.players.get(vez).setCreditos(i);
     }
 
     public void setPecaEspecial(int vez, int num){
@@ -270,6 +279,7 @@ public class Jogo implements Serializable, Cloneable {
                 jog.setCreditos(NUMCREDITOS);
             }
         }
+        jogada=0;
         vezJogador= (int) (Math.random()*2);
         players.get(vezJogador).decrementaBonus();
         return true;
@@ -279,6 +289,7 @@ public class Jogo implements Serializable, Cloneable {
         if(tabuleiro.get(coluna).size()>=ALTURA){
             return Erro.ColunaCheia;
         }
+        jogada++;
         tabuleiro.get(coluna).add(new Peca(vezJogador));
         if(isWinner()) {
             return Erro.Ganhou;
@@ -292,6 +303,7 @@ public class Jogo implements Serializable, Cloneable {
         if(players.get(vezJogador).getPecaEspecial()==0){
             return Erro.SemEspecial;
         }
+        jogada++;
         minijogo=Erro.Especial;
         tabuleiro.get(coluna).clear();
         players.get(vezJogador).removePecaEspecial();
@@ -304,6 +316,7 @@ public class Jogo implements Serializable, Cloneable {
             if(erro != Erro.ColunaCheia)
                 break;
         }
+        jogada++;
         if(isWinner()) {
             return Erro.Ganhou;
         }
@@ -337,7 +350,7 @@ public class Jogo implements Serializable, Cloneable {
             this.tipo = temp.tipo ;
             this.vezJogador = temp.vezJogador;
             this.minijogo = temp.minijogo;
-
+            this.jogada = temp.jogada;
             ArrayList<Jogador> clonePlayers = new ArrayList<>();
 
             for(Jogador jog: temp.players) // Clone de Jogadores
@@ -439,6 +452,10 @@ public class Jogo implements Serializable, Cloneable {
 
     public void setJogadas(ArrayList<Jogo> jogadas ) {
         this.jogadas = jogadas;
+    }
+
+    public int getCreditos(int i) {
+        return players.get(i).getCreditos();
     }
 }
 

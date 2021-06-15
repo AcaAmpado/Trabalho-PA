@@ -13,7 +13,7 @@ import static jogo.ui.gui.Constantes.*;
 
 public class PrincipalPane extends BorderPane {
 
-    private GameObserver gameObserver;
+    private final GameObserver gameObserver;
 
     public PrincipalPane (GameObserver gameObserver){
         this.gameObserver=gameObserver;

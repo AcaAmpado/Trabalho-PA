@@ -1,6 +1,7 @@
 package jogo;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import jogo.logica.*;
@@ -22,6 +23,7 @@ public class MainGui extends Application {
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(windowEvent -> Platform.exit());
         primaryStage.setResizable(false);
         primaryStage.setTitle("4 em Linha");
 

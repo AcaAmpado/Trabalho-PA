@@ -12,10 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
-import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
-import jogo.logica.estados.GameOver;
-import jogo.logica.estados.PassarTurno;
 
 import static jogo.ui.gui.Constantes.FONTE_TEXTO;
 
@@ -53,12 +50,7 @@ public class JogadaPane extends VBox {
     }
 
     private void criarVista() {
-    /*  1 - Fazer Jogada
-            2 - Guardar Jogo
-            3 - Utilizar Créditos
-            4 - Jogar Peca Especial
-            5 - LogsME
-    */
+
         jogadorLabel = new Label();
         jogadorLabel.setFont(FONTE_TEXTO);
         jogadorLabel.setTextFill(Color.WHITE);
@@ -85,6 +77,7 @@ public class JogadaPane extends VBox {
         dadosBox.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
         dadosBox.setPadding(new Insets(10));
 
+
         btJogada = new Button("Fazer Jogada");
         btJogada.setFont(FONTE_TEXTO);
 
@@ -110,12 +103,21 @@ public class JogadaPane extends VBox {
         guardaJogoNome.setFont(FONTE_TEXTO);
         guardaJogoNome.setPromptText("Nome do ficheiro");
 
-        Label guardaJogoLabel = new Label("  Nome do Ficheiro:  ");
+        Label guardaJogoLabel = new Label("Nome do Ficheiro: ");
         guardaJogoLabel.setFont(FONTE_TEXTO);
         guardaJogoLabel.setTextFill(Color.WHITE);
 
-        HBox guardaJogoBox = new HBox();
-        guardaJogoBox.getChildren().addAll(btGuardaJogo, guardaJogoLabel, guardaJogoNome);
+        HBox textGuardaBox = new HBox(10);
+        textGuardaBox.getChildren().addAll(guardaJogoLabel, guardaJogoNome);
+        textGuardaBox.setAlignment(Pos.CENTER);
+
+        VBox btGuardaBox = new VBox(10);
+        btGuardaBox.setSpacing(20);
+        btGuardaBox.getChildren().addAll(btGuardaJogo,textGuardaBox);
+        btGuardaBox.setAlignment(Pos.CENTER);
+
+        HBox guardaJogoBox = new HBox(10);
+        guardaJogoBox.getChildren().addAll(btGuardaBox);
         guardaJogoBox.setAlignment(Pos.CENTER);
         guardaJogoBox.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
         guardaJogoBox.setPadding(new Insets(10));
@@ -130,10 +132,19 @@ public class JogadaPane extends VBox {
 
         creditosText = new TextField();
         creditosText.setFont(FONTE_TEXTO);
-        creditosText.setPromptText("Numero de Creditos");
+        creditosText.setPromptText("Numero de Créditos");
+
+        HBox textCreditosBox = new HBox(10);
+        textCreditosBox.getChildren().addAll(creditosLabel, creditosText);
+        textCreditosBox.setAlignment(Pos.CENTER);
+
+        VBox btCreditosBox = new VBox(10);
+        btCreditosBox.setSpacing(20);
+        btCreditosBox.getChildren().addAll(btCreditos,textCreditosBox);
+        btCreditosBox.setAlignment(Pos.CENTER);
 
         creditosBox = new HBox(10);
-        creditosBox.getChildren().addAll(btCreditos, creditosLabel, creditosText);
+        creditosBox.getChildren().addAll(btCreditosBox);
         creditosBox.setAlignment(Pos.CENTER);
         creditosBox.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
         creditosBox.setPadding(new Insets(10));
@@ -224,12 +235,11 @@ public class JogadaPane extends VBox {
             }
             if(gameObserver.guardaJogo(value+".dat")){
                 erro.setText("Jogo Guardado com Sucesso!");
-                erro.setVisible(true);
             }
             else{
                 erro.setText("Erro a Guardar o Jogo!");
-                erro.setVisible(true);
             }
+            erro.setVisible(true);
         });
 
         btCreditos.setOnAction(e -> {
@@ -280,12 +290,9 @@ public class JogadaPane extends VBox {
             }
         });
 
-
-       // btHistorico.setOnAction((e)->gameObserver.historicoJogos());
-
         // btLogs.setOnAction((e)->gameObserver.yeet());
 
-        btSair.setOnAction( (e)-> gameObserver.terminaJogo());
+        btSair.setOnAction( (e)-> gameObserver.terminaJogo()); // TODO: perguntar se quer guardar o jogo
     }
 
 
@@ -294,6 +301,8 @@ public class JogadaPane extends VBox {
             jogadorLabel.setText( "Jogador: " + gameObserver.getNomeJogadorVez() + "\tTipo de Jogador: " +  gameObserver.getTipoJogador().toString());
             creditosLabel.setText("Creditos: " + gameObserver.getCreditos());
             pecaEspecialLabel.setText("Peca Especial: " + gameObserver.getPecaEspecial());
+            creditosText.setText("");
+            guardaJogoNome.setText("");
             if(gameObserver.getTipoJogador() == TipoJogador.AI){
                 colunaJogadaLabel.setVisible(false);
                 colunaJogadaCombo.setVisible(false);

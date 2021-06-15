@@ -15,8 +15,8 @@ import static jogo.ui.gui.Constantes.*;
 
 public class TabuleiroPane extends GridPane {
 
-    private GameObserver gameObserver;
-    GridPane gridPane;
+    private final GameObserver gameObserver;
+    private GridPane gridPane;
 
     public TabuleiroPane(GameObserver gameObserver){
         this.gameObserver = gameObserver;
