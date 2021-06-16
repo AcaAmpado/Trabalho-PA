@@ -20,9 +20,13 @@ public abstract class MiniGame implements Serializable {
     
     public abstract boolean verificaInput(String input);
 
+    public abstract Integer getTempoRonda();
+
     public abstract boolean verificaInput(double numero);
 
     public int getPontuacao(){
         return pontos;
     }
+
+
 }

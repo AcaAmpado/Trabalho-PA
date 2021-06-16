@@ -7,6 +7,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
+import static jogo.logica.dados.Erro.Ganhou;
+
 public class GameObserver {
 
     private final MaquinaEstados maquinaEstados;
@@ -39,32 +41,33 @@ public class GameObserver {
 
     public void terminaJogo() {
         maquinaEstados.terminaJogo();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void start() {
         maquinaEstados.start();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void selGameMode(int tipo) {
         maquinaEstados.selGameMode(tipo);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
-    public void carregaJogo(String value) {
-        maquinaEstados.carregaJogo(value);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+    public boolean carregaJogo(String value) {
+        boolean bool = maquinaEstados.carregaJogo(value);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
+        return bool;
     }
 
     public void historicoJogos() {
         maquinaEstados.historicoJogos();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void comecaJogo(String jog1, String jog2) {
         maquinaEstados.comecaJogo(jog1,jog2);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public String getNomeJogadorVez() {
@@ -85,12 +88,14 @@ public class GameObserver {
 
     public void usaCreditos(int numero) {
         maquinaEstados.usaCreditos(numero);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void fazJogada(int value) {
         maquinaEstados.fazJogada(value);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        if(maquinaEstados.getEstadoErro() == Ganhou || maquinaEstados.getEstadoErro() == Erro.TabuleiroCheio)
+            propertyChangeSupport.firePropertyChange("historico",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public boolean guardaJogo(String nomeFich) {
@@ -99,12 +104,14 @@ public class GameObserver {
 
     public void jogaPecaEspecial(int value) {
         maquinaEstados.jogaPecaEspecial(value);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void jogaAI() {
         maquinaEstados.jogaAI();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        if(maquinaEstados.getEstadoErro() == Ganhou || maquinaEstados.getEstadoErro() == Erro.TabuleiroCheio)
+            propertyChangeSupport.firePropertyChange("historico",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public boolean isHistorico() {
@@ -113,12 +120,12 @@ public class GameObserver {
 
     public void passaTurnoHistorico() {
         maquinaEstados.passaTurnoHistorico();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public void passaTurno() {
         maquinaEstados.passaTurno();
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public int getHistoricoNum() {
@@ -131,10 +138,65 @@ public class GameObserver {
 
     public void replayHistorico(int id) {
         maquinaEstados.replayHistorico(id);
-        propertyChangeSupport.firePropertyChange("yeet",null,null);
+        propertyChangeSupport.firePropertyChange("estados",null,null);
     }
 
     public Erro isMinigame() {
         return maquinaEstados.isMinigame();
+    }
+
+    public void guardaHistoricoF(){
+        maquinaEstados.guardaHistoricoF();
+    }
+
+    public char getSymbol() {
+        return maquinaEstados.getSymbol();
+    }
+
+    public void startMinigame() {
+        maquinaEstados.startMiniGame();
+        propertyChangeSupport.firePropertyChange("estados",null,null);
+    }
+
+    public void semMinigame() {
+        maquinaEstados.semMiniGame();
+        propertyChangeSupport.firePropertyChange("estados",null,null);
+    }
+
+    public int getMiniJogo() {
+        return maquinaEstados.getMiniJogo();
+    }
+
+    public String getRules() {
+        return maquinaEstados.getRules();
+    }
+
+    public String getPergunta() {
+        return maquinaEstados.getPergunta();
+
+    }
+
+    public void jogaMinijogo(String input) {
+        maquinaEstados.jogaMinijogo(input);
+        propertyChangeSupport.firePropertyChange("minijogoPergunta",null,null);
+        switch (maquinaEstados.isMinigame()) {
+            case Ganhou, Perdeu -> propertyChangeSupport.firePropertyChange("estados",null,null);
+        }
+    }
+
+    public void jogaMinijogo(Double input) {
+        maquinaEstados.jogaMinijogo(input);
+        propertyChangeSupport.firePropertyChange("minijogoPergunta",null,null);
+        switch (maquinaEstados.isMinigame()) {
+            case Ganhou, Perdeu -> propertyChangeSupport.firePropertyChange("estados",null,null);
+        }
+    }
+
+    public Integer getTempoRonda() {
+        return maquinaEstados.getTempoRonda();
+    }
+
+    public void getLogsME() {
+        maquinaEstados.getLogsME();
     }
 }

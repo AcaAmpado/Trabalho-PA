@@ -6,6 +6,7 @@ import jogo.logica.dados.Jogo;
 public class GameOver extends EstadoAdapter{
     public GameOver(Jogo jogo) {
         super(jogo);
+        jogo.addLog("GameOver");
     }
 
     @Override

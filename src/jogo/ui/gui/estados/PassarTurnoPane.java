@@ -2,16 +2,18 @@ package jogo.ui.gui.estados;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
 import jogo.logica.dados.Erro;
 import jogo.logica.dados.TipoJogador;
 
+import java.util.Optional;
+
+import static jogo.ui.gui.Constantes.DIM_BOLA;
 import static jogo.ui.gui.Constantes.FONTE_TEXTO;
 
 public class PassarTurnoPane extends VBox {
@@ -29,7 +31,8 @@ public class PassarTurnoPane extends VBox {
     private Label erro;
     private Label labelMensagem;
     private HBox guardaJogoBox;
-
+    private Circle corJogador;
+    private Button btLogs;
 
     public PassarTurnoPane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -44,10 +47,14 @@ public class PassarTurnoPane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void criarVista() {
+
+        corJogador = new Circle();
+        corJogador.setRadius(DIM_BOLA);
+
 
         jogadorLabel = new Label();
         jogadorLabel.setFont(FONTE_TEXTO);
@@ -65,7 +72,7 @@ public class PassarTurnoPane extends VBox {
         pecaEspecialLabel.setPadding(new Insets(10));
 
         HBox especiaisBox = new HBox(10);
-        especiaisBox.getChildren().addAll(creditosLabel,pecaEspecialLabel);
+        especiaisBox.getChildren().addAll(creditosLabel,pecaEspecialLabel,corJogador);
         especiaisBox.setAlignment(Pos.CENTER);
         especiaisBox.setPadding(new Insets(10));
 
@@ -140,7 +147,7 @@ public class PassarTurnoPane extends VBox {
         creditosBox.setPadding(new Insets(10));
 
 
-        Button btLogs = new Button("Logs");
+        btLogs = new Button("Logs");
         btLogs.setFont(FONTE_TEXTO);
 
         HBox logsBox = new HBox(10);
@@ -183,9 +190,11 @@ public class PassarTurnoPane extends VBox {
             if(gameObserver.isHistorico()){
                 gameObserver.passaTurnoHistorico();
                 if(gameObserver.getEstadoErro()== Erro.FimJogo){
-                    labelMensagem.setText("O jogo acabou!" +
-                            "\nO jogador "+ gameObserver.getNomeJogadorVez() +" foi o ultimo a jogar!");
-                    labelMensagem.setVisible(true);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Resultado do jogo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("O jogo acabou!\nO jogador "+ gameObserver.getNomeJogadorVez() +" foi o ultimo a jogar!");
+                    alert.showAndWait();
                 }
                 else labelMensagem.setVisible(false);
             }
@@ -205,6 +214,7 @@ public class PassarTurnoPane extends VBox {
             else{
                 erro.setText("Erro a Guardar o Jogo!");
             }
+            erro.setTextFill(Color.RED);
             erro.setVisible(true);
         });
 
@@ -213,6 +223,7 @@ public class PassarTurnoPane extends VBox {
             if(value.length()<1){
                 creditosText.requestFocus();
                 erro.setText("Introduza um número nos créditos");
+                erro.setTextFill(Color.RED);
                 erro.setVisible(true);
                 return;
             }
@@ -222,6 +233,7 @@ public class PassarTurnoPane extends VBox {
             }catch (NumberFormatException ignored){
                 creditosText.requestFocus();
                 erro.setText("Introduza um número nos créditos");
+                erro.setTextFill(Color.RED);
                 erro.setVisible(true);
                 return;
             }
@@ -231,42 +243,87 @@ public class PassarTurnoPane extends VBox {
             }
             else{
                 erro.setText("Numero tem que ser superior a 0!");
+                erro.setTextFill(Color.RED);
                 erro.setVisible(true);
             }
             switch (gameObserver.getEstadoErro()){
                 case SemCreditos -> {
                     erro.setText("Nao possui créditos suficientes!");
+                    erro.setTextFill(Color.RED);
                     erro.setVisible(true);
                 }
                 case SemJogadas -> {
                     erro.setText("Nao existem jogadas para o número de créditos!");
+                    erro.setTextFill(Color.RED);
                     erro.setVisible(true);
                 }
                 case SemErros -> erro.setVisible(false);
             }
         });
 
-        // btLogs.setOnAction((e)->gameObserver.yeet());
+        btLogs.setOnAction((e)->gameObserver.getLogsME());
 
-        btSair.setOnAction( (e)-> gameObserver.terminaJogo()); // TODO: perguntar se quer guardar o jogo
+        btSair.setOnAction( (e)-> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Fechar Jogo?");
+            alert.setHeaderText(null);
+            alert.setContentText("Tem a certeza que quer sair do jogo?");
+            alert.getButtonTypes().setAll(ButtonType.YES,ButtonType.CANCEL);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isPresent()){
+                if (result.get() == ButtonType.YES){
+                    if(!gameObserver.isHistorico()){
+                        TextInputDialog dialog = new TextInputDialog("ficheiro");
+                        dialog.setTitle("Guarda Jogo");
+                        dialog.setHeaderText(null);
+                        dialog.setContentText("Introduza o nome do ficheiro:");
+                        Optional<String> resultado = dialog.showAndWait();
+                        if (resultado.isPresent()){
+                            gameObserver.guardaJogo(resultado.get()+".dat");
+                        }else e.consume();
+                    }
+                    gameObserver.terminaJogo();
+                } else {
+                    e.consume();
+                }
+            }
+        });
     }
 
     private void atualiza() {
         if(gameObserver.getStatus() == Situacao.PassarTurno){
-
+            if(gameObserver.getSymbol()=='A')
+                corJogador.setFill(Color.BLUE);
+            else if (gameObserver.getSymbol()=='B')
+                corJogador.setFill(Color.RED);
+            else
+                corJogador.setFill(Color.WHITE);
             jogadorLabel.setText( "Jogador: " + gameObserver.getNomeJogadorVez() + "\tTipo de Jogador: " +  gameObserver.getTipoJogador().toString());
             creditosLabel.setText("Creditos: " + gameObserver.getCreditos());
             creditosText.setText("");
             guardaJogoNome.setText("");
             pecaEspecialLabel.setText("Peca Especial: " + gameObserver.getPecaEspecial());
             creditosBox.setVisible(gameObserver.getTipoJogador() != TipoJogador.AI);
+            creditosBox.setVisible(gameObserver.getTipoJogador() != TipoJogador.AI);
             if(gameObserver.isHistorico()){
                 guardaJogoBox.setVisible(false);
                 creditosBox.setVisible(false);
+                erro.setTextFill(Color.WHITE);
+                erro.setVisible(true);
+                switch (gameObserver.isMinigame()){
+                    case Perdeu -> erro.setText("O jogador jogou um minijogo e perdeu!");
+                    case Ganhou -> erro.setText("O jogador jogou um minijogo e ganhou uma peça especial!");
+                    case NaoJogou -> erro.setText("O jogador optou por nao jogar o minijogo");
+                    case Especial -> erro.setText("O jogador jogou uma peca especial");
+                    case Creditos -> erro.setText("O jogador utilizou creditos");
+                    default -> erro.setVisible(false);
+                }
             }else{
                 guardaJogoBox.setVisible(true);
                 creditosBox.setVisible(true);
             }
+
             this.setVisible(true);
         }
         else this.setVisible(false);

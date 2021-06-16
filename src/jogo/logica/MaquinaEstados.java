@@ -13,12 +13,10 @@ public class MaquinaEstados {
     Jogo jogo;
     IEstado atual;
     ArrayList<ArrayList<Jogo>> historico;
-   // ArrayList<String> logME;
 
     public MaquinaEstados(){
         jogo = new Jogo();
         historico = new ArrayList<>();
-        //logME = new ArrayList<>();
         atual = new Inicio(jogo);
         try {
             carregaHistoricoF();
@@ -80,16 +78,7 @@ public class MaquinaEstados {
         return jogo.getTabuleiro();
     }
 
-    //_______________________LOG_____________________
 
-/*    public ArrayList<String> getLogME(){
-        return logME;
-    }
-
-   public void addLog(String log){
-        logME.add(log);
-    }
-*/
     //_____________________CHECKS__________________
 
     public boolean isHistorico() {
@@ -117,6 +106,7 @@ public class MaquinaEstados {
     //______________________GUARDA_CARREGA________________________
 
     public boolean guardaJogo(String nomeSave) {
+        jogo.addLog("guardaJogo");
         ArrayList <Jogo> tempJogada = jogo.getJogadas();
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(nomeSave))) {
             out.writeObject(jogo);
@@ -132,6 +122,7 @@ public class MaquinaEstados {
     }
 
     public boolean carregaJogo(String name) {
+        jogo.addLog("carregaJogo()");
         int temp;
         ArrayList<Jogo> jogadasTemp = new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(name))) {
@@ -145,7 +136,7 @@ public class MaquinaEstados {
         } catch (IOException | ClassNotFoundException ignored) {
             return false;
         }
-        return true; // TODO: Verificar se da para nao devolver nada aqui
+        return true;
     }
 
     private IEstado switchState(Situacao readObject) {
@@ -224,14 +215,18 @@ public class MaquinaEstados {
         atual = atual.passaTurnoHistorico();
     }
 
-    public void guardaHistoricoF() throws IOException {
+    public void guardaHistoricoF(){
+        jogo.addLog("guardaHistoricoF()");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("Historico.dat"))) {
             out.writeObject(historico);
+        }catch (IOException ignored){
+
         }
     }
 
     @SuppressWarnings("unchecked")
     public void carregaHistoricoF() throws IOException, ClassNotFoundException {
+        jogo.addLog("carregaHistoricoF()");
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("Historico.dat"))) {
             historico = (ArrayList<ArrayList<Jogo>>) in.readObject();
         }
@@ -266,5 +261,17 @@ public class MaquinaEstados {
 
     public String getRegras() {
         return jogo.getRegras();
+    }
+
+    public char getSymbol() {
+        return jogo.getSymbol();
+    }
+
+    public Integer getTempoRonda() {
+        return jogo.getTempoRonda();
+    }
+
+    public void getLogsME() {
+        System.out.println(jogo.getLogME());
     }
 }

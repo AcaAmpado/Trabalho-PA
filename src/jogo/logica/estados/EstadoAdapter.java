@@ -3,8 +3,6 @@ package jogo.logica.estados;
 import jogo.logica.Situacao;
 import jogo.logica.dados.Jogo;
 
-import java.util.ArrayList;
-
 public abstract class EstadoAdapter implements IEstado {
 
     Jogo jogo;
@@ -14,6 +12,7 @@ public abstract class EstadoAdapter implements IEstado {
     @Override
     public IEstado start() {
         jogo.setupJogo();
+        jogo.addLog("start()");
         return new GameMode(jogo);
     }
 

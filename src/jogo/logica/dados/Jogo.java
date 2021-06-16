@@ -27,9 +27,11 @@ public class Jogo implements Serializable, Cloneable {
     private int jogada;
     private Erro minijogo;
     private MiniGame miniGame;
+    ArrayList<String> logME;
 
     public Jogo (){
-       setupJogo();
+        logME = new ArrayList<>();
+        setupJogo();
     }
 
     public void setupJogo(){
@@ -41,6 +43,16 @@ public class Jogo implements Serializable, Cloneable {
         historico = false;
         jogada=0;
         minijogo=Erro.Critico;
+    }
+
+    //_______________________LOG_____________________
+
+    public ArrayList<String> getLogME(){
+        return logME;
+    }
+
+    public void addLog(String log){
+        logME.add(log);
     }
 
     // ____________GET____________
@@ -59,12 +71,37 @@ public class Jogo implements Serializable, Cloneable {
                 "Boa Sorte!\n";
     }
 
+    public char getSymbol(){
+        return players.get(vezJogador).getSymbol();
+    }
+
     public int getJogada(){
         return jogada;
     }
 
-    public void setJogada(int num){
-        jogada+=num;
+
+    public ArrayList<Jogo> getJogadas() {
+        return jogadas;
+    }
+
+    public String getRules() {
+        return miniGame.rules();
+    }
+
+    public String getPergunta() {
+        return miniGame.getPergunta();
+    }
+
+    public MiniGame getMiniGame(){
+        return miniGame;
+    }
+
+    public int getCreditos(int i) {
+        return players.get(i).getCreditos();
+    }
+
+    public Integer getTempoRonda() {
+        return miniGame.getTempoRonda();
     }
 
     public TipoJogador getTipoJogador(){
@@ -134,7 +171,16 @@ public class Jogo implements Serializable, Cloneable {
         return players.get(vezJogador).getPecaEspecial();
     }
 
+    public Erro getEstadoErro() {
+        return estadoErro;
+    }
+
+
     // ____________SET____________
+
+    public void setJogada(int num){
+        jogada+=num;
+    }
 
     public void setEstadoErro(Erro estado){
         estadoErro=estado;
@@ -166,6 +212,10 @@ public class Jogo implements Serializable, Cloneable {
 
     public void setPecaEspecial(int vez, int num){
         players.get(vez).setPecaEspecial(num);
+    }
+
+    public void setJogadas(ArrayList<Jogo> jogadas ) {
+        this.jogadas = jogadas;
     }
 
     public void setMinigame() {
@@ -367,6 +417,7 @@ public class Jogo implements Serializable, Cloneable {
                 }
             }
             this.tabuleiro=cloneTabuleiro;
+
         } catch (CloneNotSupportedException ignored) {
         }
     }
@@ -397,6 +448,9 @@ public class Jogo implements Serializable, Cloneable {
                 }
             }
             clone.tabuleiro=cloneTabuleiro;
+
+            clone.logME = this.logME;
+
         } catch (CloneNotSupportedException ignored) {
         }
         return clone;
@@ -408,10 +462,6 @@ public class Jogo implements Serializable, Cloneable {
                 " "+ players.get(1).getTipo().toString()+" - " + players.get(1).getNome()+" Simb: "+ players.get(1).getSymbol() +" |";
     }
 
-    public Erro getEstadoErro() {
-        return estadoErro;
-    }
-
     public void startJogadas() {
         jogadas= new ArrayList<>();
     }
@@ -419,10 +469,6 @@ public class Jogo implements Serializable, Cloneable {
     public void guardaJogada() {
         jogadas.add((Jogo) this.clone());
         this.resetMinijogo();
-    }
-
-    public ArrayList<Jogo> getJogadas() {
-        return jogadas;
     }
 
     public void startMiniGame() {
@@ -438,24 +484,8 @@ public class Jogo implements Serializable, Cloneable {
         }
     }
 
-    public String getRules() {
-        return miniGame.rules();
-    }
-
-    public String getPergunta() {
-        return miniGame.getPergunta();
-    }
-
-    public MiniGame getMiniGame(){
-        return miniGame;
-    }
-
-    public void setJogadas(ArrayList<Jogo> jogadas ) {
-        this.jogadas = jogadas;
-    }
-
-    public int getCreditos(int i) {
-        return players.get(i).getCreditos();
+    public void setLogME(ArrayList<String> logME) {
+        this.logME = logME;
     }
 }
 

@@ -5,8 +5,9 @@ public class RandomContas extends MiniGame {
     private final int MIN = 1, MAX = 10;
     private double resultado;
 
-    private long start;
     private long end;
+
+    private long tempoRonda;
 
     public RandomContas(){
         pontos=0;
@@ -60,8 +61,14 @@ public class RandomContas extends MiniGame {
 
     @Override
     public void startTimer() {
-        start = System.currentTimeMillis();
-        end = start + 30*1000;
+        long start = System.currentTimeMillis();
+        tempoRonda = 30;
+        end = start + tempoRonda*1000;
+    }
+
+    @Override
+    public Integer getTempoRonda() {
+        return Math.toIntExact(tempoRonda);
     }
 
     private int randomNum(){

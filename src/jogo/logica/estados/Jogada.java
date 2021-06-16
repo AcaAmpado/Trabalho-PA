@@ -8,15 +8,19 @@ import jogo.logica.dados.Jogo;
 public class Jogada extends EstadoAdapter{
     public Jogada(Jogo jogo) {
         super(jogo);
+        jogo.addLog("Jogada");
     }
 
     @Override
     public IEstado usaCreditos(int numCr){
+
         if(jogo.getCreditos() < numCr) {
+            jogo.addLog("usaCreditos() = semCreditos");
             jogo.setEstadoErro(Erro.SemCreditos);
             return this;
         }
         if(jogo.getJogada()-numCr<0){
+            jogo.addLog("usaCreditos() = semJogadas");
             jogo.setEstadoErro(Erro.SemJogadas);
             return this;
         }
@@ -24,6 +28,7 @@ public class Jogada extends EstadoAdapter{
         try{
             temporario = (Jogo) jogo.getJogadas().get(jogo.getJogadas().size()-1-numCr).clone();
         }catch (IndexOutOfBoundsException e){
+            jogo.addLog("usaCreditos() = semJogadas");
             jogo.setEstadoErro(Erro.SemJogadas);
             return this;
         }
@@ -32,18 +37,20 @@ public class Jogada extends EstadoAdapter{
         temporario.resetBonus(6);
         temporario.setPecaEspecial(0,jogo.getPecaEspecial(0));
         temporario.setPecaEspecial(1,jogo.getPecaEspecial(1));
-        //TODO: copiar logs e sobrepor aos carregados
+        temporario.setLogME(jogo.getLogME());
         if(jogo.getJogadas().size()-1-numCr!=0)
             temporario.setVezJogador();
         temporario.setJogadas(jogo.getJogadas());
         jogo.copiaValues(temporario);
         jogo.setEstadoErro(Erro.SemErros);
         jogo.setJogada(1);
+        jogo.addLog("usaCreditos() = sem Erros");
         return new Jogada(jogo);
     }
 
     @Override
     public IEstado fazJogada(int coluna) {
+        jogo.addLog("fazJogada()");
         jogo.setEstadoErro(jogo.fazJogada(coluna));
         switch(jogo.getEstadoErro()){
             case Ganhou, TabuleiroCheio -> {
@@ -63,6 +70,7 @@ public class Jogada extends EstadoAdapter{
 
     @Override
     public IEstado jogaPecaEspecial(int coluna) {
+        jogo.addLog("jogaPecaEspecial()");
         jogo.setEstadoErro(jogo.jogaPecaEspecial(coluna));
         if (jogo.getEstadoErro() == Erro.JogadaValida) {
             jogo.guardaJogada();
@@ -73,6 +81,7 @@ public class Jogada extends EstadoAdapter{
 
     @Override
     public IEstado jogaAI() {
+        jogo.addLog("jogaAI()");
         jogo.setEstadoErro(jogo.jogaAI());
         switch (jogo.getEstadoErro()) {
             case Ganhou, TabuleiroCheio-> {

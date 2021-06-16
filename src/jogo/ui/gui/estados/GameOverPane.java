@@ -3,12 +3,15 @@ package jogo.ui.gui.estados;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
+import java.util.Optional;
 
 import static jogo.ui.gui.Constantes.FONTE_TEXTO;
 
@@ -32,11 +35,27 @@ public class GameOverPane extends VBox {
     private void registarListeners() {
         btContinuar.setOnAction( (e)-> gameObserver.start());
 
-        btSair.setOnAction( (e) -> Platform.exit());
+        btSair.setOnAction( (e)-> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Fechar Aplicação?");
+            alert.setHeaderText(null);
+            alert.setContentText("Tem a certeza que quer sair da aplicação?");
+            alert.getButtonTypes().setAll(ButtonType.YES,ButtonType.CANCEL);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isPresent()){
+                if (result.get() == ButtonType.YES){
+                    gameObserver.guardaHistoricoF();
+                    Platform.exit();
+                } else {
+                    e.consume();
+                }
+            }
+        });
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void criarVista() {

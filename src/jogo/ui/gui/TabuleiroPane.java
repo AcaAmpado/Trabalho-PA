@@ -8,9 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import jogo.logica.GameObserver;
 import jogo.logica.dados.Jogo;
-
 import java.util.ArrayList;
-
 import static jogo.ui.gui.Constantes.*;
 
 public class TabuleiroPane extends GridPane {
@@ -29,7 +27,7 @@ public class TabuleiroPane extends GridPane {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void criarVista() {
@@ -46,7 +44,6 @@ public class TabuleiroPane extends GridPane {
         gridPane = new GridPane();
         gridPane.setHgap(20);
         gridPane.setVgap(20);
-        //gridPane.setGridLinesVisible(true);
         getChildren().addAll(gridPane);
     }
 

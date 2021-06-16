@@ -8,10 +8,12 @@ public class NamePlayers extends EstadoAdapter{
 
     public NamePlayers(Jogo jogo) {
         super(jogo);
+        jogo.addLog("NamePlayers");
     }
 
     @Override
     public IEstado comecaJogo(String player1,String player2) {
+        jogo.addLog("comecaJogo()");
         jogo.setPlayer(player1, 'A');
         jogo.setPlayer(player2, 'B');
         if(jogo.comecaJogo()){

@@ -7,18 +7,21 @@ public class DecisaoMiniGame extends EstadoAdapter{
 
     public DecisaoMiniGame(Jogo jogo) {
         super(jogo);
+        jogo.addLog("DecisaoMiniGame");
     }
 
     @Override
     public IEstado startMiniGame() {
         jogo.resetMinijogo();
         jogo.startMiniGame();
+        jogo.addLog("startMinigame()");
         return new MiniGame(jogo);
     }
 
     @Override
     public IEstado semMinigame() {
         jogo.resetBonus(-2);
+        jogo.addLog("semMinigame()");
         return new Jogada(jogo);
     }
 

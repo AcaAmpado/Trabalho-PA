@@ -1,9 +1,6 @@
 package jogo.logica.estados;
 
 import jogo.logica.Situacao;
-import jogo.logica.dados.Jogo;
-
-import java.util.ArrayList;
 
 public interface IEstado {
 

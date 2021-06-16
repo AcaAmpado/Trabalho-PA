@@ -1,7 +1,5 @@
 package jogo;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import jogo.ui.texto.QuatroUI;
 import jogo.logica.MaquinaEstados;
 

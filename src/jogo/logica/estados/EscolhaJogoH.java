@@ -7,11 +7,13 @@ public class EscolhaJogoH extends EstadoAdapter{
 
     public EscolhaJogoH(Jogo jogo) {
         super(jogo);
+        jogo.addLog("EscolhaJogoH");
     }
 
     @Override
     public IEstado aguardaPassarTurno() {
         jogo.replayHistorico();
+        jogo.addLog("replayHistorico()");
         return new PassarTurno(jogo);
     }
 

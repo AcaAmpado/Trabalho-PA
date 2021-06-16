@@ -7,6 +7,7 @@ public class MiniGame extends EstadoAdapter{
 
     public MiniGame(Jogo jogo) {
         super(jogo);
+        jogo.addLog("MiniGame");
     }
 
     @Override
@@ -16,6 +17,7 @@ public class MiniGame extends EstadoAdapter{
 
     @Override
     public IEstado jogaMinijogo(double numero) {
+        jogo.addLog("jogaMinijogo()");
         if(jogo.getMiniGame().checkTimer()){
             if(jogo.getMiniGame().verificaInput(numero)){ // tem pontuação necessária
                 return endGame();
@@ -28,6 +30,7 @@ public class MiniGame extends EstadoAdapter{
 
     @Override
     public IEstado jogaMinijogo(String input) {
+        jogo.addLog("jogaMinijogo()");
         if(jogo.getMiniGame().checkTimer()){
             if(jogo.getMiniGame().verificaInput(input)){ // tem pontuaçao necessaria
                 return endGame();
@@ -39,6 +42,7 @@ public class MiniGame extends EstadoAdapter{
     }
 
     private IEstado endGame(){
+        jogo.addLog("engGame()");
         jogo.resetBonus(jogo.getMiniGame().getPontuacao());
         if(jogo.getMiniGame().getPontuacao() >= 5){
             jogo.addPecaEspecial();

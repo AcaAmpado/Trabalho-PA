@@ -8,10 +8,12 @@ public class PassarTurno extends EstadoAdapter{
 
     public PassarTurno(Jogo jogo) {
         super(jogo);
+        jogo.addLog("PassarTurno");
     }
 
     @Override
     public IEstado passaTurno() {
+        jogo.addLog("passaTurno()");
         jogo.setVezJogador();
         jogo.atualizaBonus();
         if(jogo.checkMiniGame()){
@@ -24,6 +26,7 @@ public class PassarTurno extends EstadoAdapter{
 
     @Override
     public IEstado usaCreditos(int numCr){
+        jogo.addLog("usaCreditos()");
         if(jogo.getCreditos() < numCr) {
             jogo.setEstadoErro(Erro.SemCreditos);
             return this;
@@ -56,6 +59,7 @@ public class PassarTurno extends EstadoAdapter{
 
     @Override
     public IEstado passaTurnoHistorico() {
+        jogo.addLog("passaTurnoHistorico()");
         jogo.setEstadoErro(jogo.replayHistorico());
         if(jogo.getEstadoErro() == Erro.FimJogo){
             return new GameOver(jogo);

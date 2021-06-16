@@ -5,23 +5,22 @@ import jogo.logica.GameObserver;
 
 public class Root extends BorderPane {
 
-    private GameObserver gameObserver;
+    private final GameObserver gameObserver;
 
     private PrincipalPane principalPane;
 
     public Root(GameObserver gameObserver){
         this.gameObserver=gameObserver;
-        criarVistaCentral();
+        criarVista();
         registarObserver();
         atualiza();
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
-    private void criarVistaCentral(){
-
+    private void criarVista(){
         principalPane = new PrincipalPane(gameObserver);
         setCenter(principalPane);
     }

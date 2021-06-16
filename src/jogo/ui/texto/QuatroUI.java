@@ -4,7 +4,6 @@ import jogo.logica.MaquinaEstados;
 import jogo.logica.dados.Erro;
 import jogo.auxfunc.auxFunc;
 import jogo.logica.dados.TipoJogador;
-import java.io.IOException;
 
 public class QuatroUI {
     MaquinaEstados maquinaEstados;
@@ -281,10 +280,7 @@ public class QuatroUI {
         switch (auxFunc.escolherOpcao("Continuar", "Sair")) {
             case 1 -> maquinaEstados.start();
             case 0 -> {
-                try{
-                    maquinaEstados.guardaHistoricoF();
-                }catch (IOException ignored){
-                }
+                maquinaEstados.guardaHistoricoF();
                 System.out.println("Obrigado por jogar 4 em linha!");
                 sair=true;
             }

@@ -2,14 +2,12 @@ package jogo.ui.gui.estados;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
+
 import static jogo.ui.gui.Constantes.FONTE_TEXTO;
 
 public class EscolhaJogoHPane extends VBox {
@@ -20,6 +18,9 @@ public class EscolhaJogoHPane extends VBox {
     private Button btEscolheJogoH;
     private Button btSair;
     private Label erro;
+    boolean carregado;
+    private HBox boxEscolheJogoH;
+    private HBox boxSair;
 
     public EscolhaJogoHPane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -39,14 +40,6 @@ public class EscolhaJogoHPane extends VBox {
                 gameObserver.replayHistorico((int) group.getSelectedToggle().getUserData());
                 erro.setTextFill(Color.GREEN);
                 erro.setVisible(true);
-                switch (gameObserver.isMinigame()){
-                    case Perdeu -> erro.setText("O jogador jogou um minijogo e perdeu!");
-                    case Ganhou -> erro.setText("O jogador jogou um minijogo e ganhou uma peça especial!");
-                    case NaoJogou -> erro.setText("O jogador optou por nao jogar o minijogo");
-                    case Especial -> erro.setText("O jogador jogou uma peca especial");
-                    case Creditos -> erro.setText("O jogador utilizou creditos");
-                    default -> erro.setVisible(false);
-                }
             }else{
                 erro.setText("Selecione um jogo!");
                 erro.setTextFill(Color.RED);
@@ -58,15 +51,18 @@ public class EscolhaJogoHPane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("historico", evt -> carregaJogos());
     }
 
     private void criarVista() {
 
+        carregado=false;
+
         btEscolheJogoH = new Button("Escolher Jogo");
         btEscolheJogoH.setFont(FONTE_TEXTO);
 
-        HBox boxEscolheJogoH = new HBox(10);
+        boxEscolheJogoH = new HBox(10);
         boxEscolheJogoH.getChildren().addAll(btEscolheJogoH);
         boxEscolheJogoH.setAlignment(Pos.CENTER);
         boxEscolheJogoH.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
@@ -75,7 +71,7 @@ public class EscolhaJogoHPane extends VBox {
         btSair = new Button("Sair");
         btSair.setFont(FONTE_TEXTO);
 
-        HBox boxSair = new HBox(10);
+        boxSair = new HBox(10);
         boxSair.getChildren().addAll(btSair);
         boxSair.setAlignment(Pos.CENTER);
         boxSair.setBorder(new Border(new BorderStroke(Color.DARKCYAN, BorderStrokeStyle.SOLID,new CornerRadii(10),new BorderWidths(1))));
@@ -95,8 +91,12 @@ public class EscolhaJogoHPane extends VBox {
 
     }
 
-    private void atualiza() {
+    private void carregaJogos(){
+        menu.getChildren().clear();
+        menu.getChildren().addAll(erro,boxEscolheJogoH,boxSair);
         for(int i = 0; i < gameObserver.getHistoricoNum(); i++){
+
+
             RadioButton btjogo = new RadioButton();
             btjogo.setUserData(i);
             btjogo.setToggleGroup(group);
@@ -112,7 +112,15 @@ public class EscolhaJogoHPane extends VBox {
             jogoBox.setPadding(new Insets(10));
 
             menu.getChildren().add(jogoBox);
+            carregado = true;
         }
+    }
+
+    private void atualiza() {
+        if(!carregado){
+            carregaJogos();
+        }
+
         this.setVisible(gameObserver.getStatus() ==  Situacao.Historico );
     }
 }

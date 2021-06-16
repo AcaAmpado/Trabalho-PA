@@ -23,6 +23,7 @@ public class GameModePane extends VBox {
     private ComboBox<String> comboTipoJogo;
     private TextField carregaJogoText;
     private Label labelErro;
+    private Button btLogs;
 
     public GameModePane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -89,8 +90,8 @@ public class GameModePane extends VBox {
         historicoBox.setPadding(new Insets(10));
 
 
-        //?
-        Button btLogs = new Button("Logs");
+
+        btLogs = new Button("Logs");
         btLogs.setFont(FONTE_TEXTO);
 
         HBox logsBox = new HBox(10);
@@ -122,7 +123,7 @@ public class GameModePane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void registarListeners(){
@@ -143,18 +144,16 @@ public class GameModePane extends VBox {
                 carregaJogoText.requestFocus();
                 return;
             }
-            gameObserver.carregaJogo(value+".dat");
-            Erro erro=gameObserver.getEstadoErro();
-            if(erro == Erro.Critico)
-            {
-                labelErro.setVisible(true);
+            if(!gameObserver.carregaJogo(value+".dat")){
                 labelErro.setText("Erro a carregar o jogo!");
+                labelErro.setVisible(true);
             }
+            else labelErro.setVisible(false);
         });
 
         btHistorico.setOnAction((e)->gameObserver.historicoJogos());
 
-       // btLogs.setOnAction((e)->gameObserver.yeet());
+        btLogs.setOnAction((e)->gameObserver.getLogsME());
 
         btSair.setOnAction( (e)-> gameObserver.terminaJogo());
     }

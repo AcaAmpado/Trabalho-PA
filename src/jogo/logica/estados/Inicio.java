@@ -6,6 +6,7 @@ import jogo.logica.dados.Jogo;
 public class Inicio extends EstadoAdapter{
     public Inicio(Jogo jogo) {
         super(jogo);
+        jogo.addLog("Inicio");
     }
 
     @Override

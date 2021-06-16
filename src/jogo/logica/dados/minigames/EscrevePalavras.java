@@ -10,10 +10,10 @@ public class EscrevePalavras extends MiniGame {
     private final String path = "./src/jogo/logica/dados/minigames/palavras.txt";
 
     private final ArrayList<String> palavras;
-    private ArrayList<String> palavrasEscolhidas;
+    private final ArrayList<String> palavrasEscolhidas;
     private long letras;
-    private long start;
     private long end;
+    private long tempoRonda;
 
     public EscrevePalavras(){
         pontos=0;
@@ -35,7 +35,7 @@ public class EscrevePalavras extends MiniGame {
 
     }
 
-    public void lerFTexto( String nome) throws IOException{
+    public void lerFTexto( String path) throws IOException{
             try {
                 File txt = new File(path);
                 Scanner leitorFich = new Scanner(txt);
@@ -60,8 +60,9 @@ public class EscrevePalavras extends MiniGame {
 
     @Override
     public void startTimer() {
-        start = System.currentTimeMillis();
-        end = start + ((letras+NECESSARIO-1)/2)* 1000;
+        long start = System.currentTimeMillis();
+        tempoRonda = (letras+NECESSARIO-1)/2;
+        end = start + tempoRonda* 1000;
     }
 
     @Override
@@ -83,6 +84,11 @@ public class EscrevePalavras extends MiniGame {
             }
         }
         return pontos == NECESSARIO;
+    }
+
+    @Override
+    public Integer getTempoRonda() {
+        return Math.toIntExact(tempoRonda);
     }
 
     @Override

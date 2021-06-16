@@ -1,5 +1,6 @@
 package jogo.ui.gui.estados;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
+
 
 import static jogo.ui.gui.Constantes.*;
 
@@ -33,7 +35,7 @@ public class InicioPane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void criarVista() {
@@ -47,6 +49,7 @@ public class InicioPane extends VBox {
         rules.setTextFill(Color.WHITE);
         rules.setWrapText(true);
         rules.setTextAlignment(TextAlignment.JUSTIFY);
+
 
         btContinuar = new Button("Continuar");
         btContinuar.setFont(FONTE_TEXTO);
@@ -66,7 +69,7 @@ public class InicioPane extends VBox {
     private void registarListeners(){
         btContinuar.setOnAction( (e) -> gameObserver.start() );
 
-        btSair.setOnAction( (e)-> gameObserver.terminaJogo() );
+        btSair.setOnAction( (e) -> Platform.exit() );
     }
 
     private void atualiza() {

@@ -106,7 +106,7 @@ public class NamePlayersPane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void atualiza() {

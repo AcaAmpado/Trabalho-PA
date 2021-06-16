@@ -17,9 +17,6 @@ public class Constantes {
     public static int TAM_X_MENU = 600;
     public static int TAM_Y_MENU = 600;
 
-    public static int TAM_X_COL = 720;
-    public static int TAM_Y_COL = 80;
-
     public static int DIM_BOLA = 30;
 
     public static Font FONTE = Font.font("comic sans", FontWeight.BOLD, FontPosture.REGULAR,20);

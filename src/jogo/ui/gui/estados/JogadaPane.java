@@ -4,16 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import jogo.logica.GameObserver;
 import jogo.logica.Situacao;
 import jogo.logica.dados.TipoJogador;
 
+import java.util.Optional;
+
+import static jogo.ui.gui.Constantes.DIM_BOLA;
 import static jogo.ui.gui.Constantes.FONTE_TEXTO;
 
 public class JogadaPane extends VBox {
@@ -35,7 +36,7 @@ public class JogadaPane extends VBox {
     Label colunaJogadaLabel;
     HBox creditosBox;
     HBox especialBox;
-
+    Circle corJogador;
 
     public JogadaPane(GameObserver gameObserver){
         this.gameObserver=gameObserver;
@@ -50,6 +51,14 @@ public class JogadaPane extends VBox {
     }
 
     private void criarVista() {
+
+        corJogador = new Circle();
+        corJogador.setRadius(DIM_BOLA);
+
+        Label corLabel = new Label("Cor das peças:");
+        corLabel.setFont(FONTE_TEXTO);
+        corLabel.setTextFill(Color.WHITE);
+        corLabel.setPadding(new Insets(10));
 
         jogadorLabel = new Label();
         jogadorLabel.setFont(FONTE_TEXTO);
@@ -67,7 +76,7 @@ public class JogadaPane extends VBox {
         pecaEspecialLabel.setPadding(new Insets(10));
 
         HBox especiaisBox = new HBox(10);
-        especiaisBox.getChildren().addAll(creditosLabel,pecaEspecialLabel);
+        especiaisBox.getChildren().addAll(creditosLabel,pecaEspecialLabel,corLabel,corJogador);
         especiaisBox.setAlignment(Pos.CENTER);
         especiaisBox.setPadding(new Insets(10));
 
@@ -193,6 +202,7 @@ public class JogadaPane extends VBox {
         erro.setFont(FONTE_TEXTO);
         erro.setTextFill(Color.RED);
 
+
         VBox menu = new VBox(10);
         menu.getChildren().addAll(dadosBox, fazJogadaBox, guardaJogoBox, creditosBox, especialBox,logsBox,sairBox,erro);
         menu.setPadding(new Insets(10));
@@ -203,7 +213,7 @@ public class JogadaPane extends VBox {
     }
 
     private void registarObserver() {
-        gameObserver.addPropertyChangeListener("yeet", evt -> atualiza());
+        gameObserver.addPropertyChangeListener("estados", evt -> atualiza());
     }
 
     private void registarListeners(){
@@ -215,8 +225,21 @@ public class JogadaPane extends VBox {
                 gameObserver.fazJogada(Integer.parseInt(value)-1);
             }
             switch(gameObserver.getEstadoErro()){
-                case Ganhou, TabuleiroCheio -> {
-                    //TODO: popup a dizer que ganhou e ficar à espera que diga okay ou assim
+                case Ganhou -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Resultado do jogo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("O jogador "+ gameObserver.getNomeJogadorVez() + " ganhou!");
+
+                    alert.showAndWait();
+                }
+                case TabuleiroCheio -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Resultado do jogo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("O jogo ficou empatado!");
+
+                    alert.showAndWait();
                 }
                 case ColunaCheia -> {
                     erro.setText("Coluna escolhida cheia!");
@@ -283,21 +306,50 @@ public class JogadaPane extends VBox {
             gameObserver.jogaPecaEspecial(Integer.parseInt(value)-1);
             switch(gameObserver.getEstadoErro()){
                 case SemEspecial -> {
-                    erro.setText("Coluna escolhida cheia!");
+                    erro.setText("Sem peças especiais!");
                     erro.setVisible(true);
                 }
                 case JogadaValida -> erro.setVisible(false);
             }
         });
 
-        // btLogs.setOnAction((e)->gameObserver.yeet());
+        btLogs.setOnAction((e)->gameObserver.getLogsME());
 
-        btSair.setOnAction( (e)-> gameObserver.terminaJogo()); // TODO: perguntar se quer guardar o jogo
+        btSair.setOnAction( (e)-> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Fechar Jogo?");
+            alert.setHeaderText(null);
+            alert.setContentText("Tem a certeza que quer sair do jogo?");
+            alert.getButtonTypes().setAll(ButtonType.YES,ButtonType.CANCEL);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isPresent()){
+                if (result.get() == ButtonType.YES){
+                    TextInputDialog dialog = new TextInputDialog("ficheiro");
+                    dialog.setTitle("Guarda Jogo");
+                    dialog.setHeaderText(null);
+                    dialog.setContentText("Introduza o nome do ficheiro:");
+                    Optional<String> resultado = dialog.showAndWait();
+                    if (resultado.isPresent()){
+                        gameObserver.guardaJogo(resultado.get()+".dat");
+                    }else e.consume();
+                    gameObserver.terminaJogo();
+                } else {
+                    e.consume();
+                }
+            }
+        });
     }
 
 
     private void atualiza() {
         if(gameObserver.getStatus() ==  Situacao.Jogada){
+            if(gameObserver.getSymbol()=='A')
+                corJogador.setFill(Color.BLUE);
+            else if (gameObserver.getSymbol()=='B')
+                corJogador.setFill(Color.RED);
+            else
+                corJogador.setFill(Color.WHITE);
             jogadorLabel.setText( "Jogador: " + gameObserver.getNomeJogadorVez() + "\tTipo de Jogador: " +  gameObserver.getTipoJogador().toString());
             creditosLabel.setText("Creditos: " + gameObserver.getCreditos());
             pecaEspecialLabel.setText("Peca Especial: " + gameObserver.getPecaEspecial());
