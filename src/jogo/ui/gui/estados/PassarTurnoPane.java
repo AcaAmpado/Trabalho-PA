@@ -304,6 +304,8 @@ public class PassarTurnoPane extends VBox {
             creditosText.setText("");
             guardaJogoNome.setText("");
             pecaEspecialLabel.setText("Peca Especial: " + gameObserver.getPecaEspecial());
+            guardaJogoBox.setVisible(true);
+            creditosBox.setVisible(true);
             creditosBox.setVisible(gameObserver.getTipoJogador() != TipoJogador.AI);
             creditosBox.setVisible(gameObserver.getTipoJogador() != TipoJogador.AI);
             if(gameObserver.isHistorico()){
@@ -319,9 +321,6 @@ public class PassarTurnoPane extends VBox {
                     case Creditos -> erro.setText("O jogador utilizou creditos");
                     default -> erro.setVisible(false);
                 }
-            }else{
-                guardaJogoBox.setVisible(true);
-                creditosBox.setVisible(true);
             }
 
             this.setVisible(true);

@@ -38,7 +38,8 @@ public class MainGui extends Application {
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent()){
                 if (result.get() == ButtonType.YES){
-                    gameObserver.guardaHistoricoF();
+                    if(gameObserver.getHistoricoNum()>0)
+                        gameObserver.guardaHistoricoF();
                     Platform.exit();
                 } else {
                      e.consume();

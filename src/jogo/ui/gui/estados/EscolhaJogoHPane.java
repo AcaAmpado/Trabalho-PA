@@ -96,7 +96,6 @@ public class EscolhaJogoHPane extends VBox {
         menu.getChildren().addAll(erro,boxEscolheJogoH,boxSair);
         for(int i = 0; i < gameObserver.getHistoricoNum(); i++){
 
-
             RadioButton btjogo = new RadioButton();
             btjogo.setUserData(i);
             btjogo.setToggleGroup(group);
@@ -120,7 +119,6 @@ public class EscolhaJogoHPane extends VBox {
         if(!carregado){
             carregaJogos();
         }
-
         this.setVisible(gameObserver.getStatus() ==  Situacao.Historico );
     }
 }

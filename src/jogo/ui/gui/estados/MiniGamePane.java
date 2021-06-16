@@ -63,7 +63,10 @@ public class MiniGamePane extends VBox {
                     interval--;
                 }
                 else{
-                    Platform.runLater(() -> btSubmeter.fire());
+                    Platform.runLater(() -> {
+                        inputText.setText("101");
+                        btSubmeter.fire();
+                    });
                     timer.cancel();
                 }
             }
