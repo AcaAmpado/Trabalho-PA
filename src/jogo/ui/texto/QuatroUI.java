@@ -64,7 +64,7 @@ public class QuatroUI {
                 maquinaEstados.historicoJogos();
                 break;
             case 4:
-                //System.out.println(maquinaEstados.getLogME().toString());
+                maquinaEstados.getLogsME();
                 break;
             case 0: //Sair
                 maquinaEstados.terminaJogo();
@@ -118,7 +118,7 @@ public class QuatroUI {
                     guardaJogo();
                     break;
                 case 3:
-                   // System.out.println(maquinaEstados.getLogME().toString());
+                    maquinaEstados.getLogsME();
                     break;
                 case 0:
                     if(sairGuarda())
@@ -168,7 +168,7 @@ public class QuatroUI {
                     maquinaEstados.jogaPecaEspecial(auxFunc.lerInteiro("Insira a coluna onde pretende jogar:",1,7)-1);
                     break;
                 case 5:
-                    //System.out.println(maquinaEstados.getLogME().toString());
+                    maquinaEstados.getLogsME();
                     break;
                 case 0:
                     if(sairGuarda())
@@ -239,7 +239,7 @@ public class QuatroUI {
                 utilizaCreditos();
                 break;
             case 4:
-                //System.out.println(maquinaEstados.getLogME().toString());
+                maquinaEstados.getLogsME();
                 break;
             case 0:
                 if(sairGuarda())
